@@ -935,7 +935,8 @@ function viewData(){
     '<div class="card data-card"><div class="ic">↓</div><div><h4>导出备份</h4><p>下载 JSON 文件，包含档案、技能、任务与项目。</p><button class="btn ghost sm" data-action="export">下载 JSON</button></div></div>' +
     '<div class="card data-card"><div class="ic">↑</div><div><h4>导入备份</h4><p>从之前的 JSON 文件恢复，导入会覆盖当前数据。</p><button class="btn ghost sm" data-action="import">选择文件</button></div></div>' +
     '<div class="card data-card"><div class="ic">◎</div><div><h4>载入示例数据</h4><p>用示例（林晓）快速体验完整流程，会覆盖当前数据。</p><button class="btn ghost sm" data-action="sample">载入示例</button></div></div>' +
-    '<div class="card data-card"><div class="ic" style="background:var(--danger-soft); color:var(--danger)">×</div><div><h4>清空数据</h4><p>清空任务与项目，档案和技能保留，适合新学期重新规划。</p><button class="btn ghost sm" data-action="clear-tasks">清空任务与项目</button></div></div>' +
+    '<div class="card data-card"><div class="ic" style="background:var(--danger-soft); color:var(--danger)">×</div><div><h4>清空任务与项目</h4><p>只清空任务与项目，档案和技能自评保留，适合新学期重新规划。</p><button class="btn ghost sm" data-action="clear-tasks">清空任务与项目</button></div></div>' +
+    '<div class="card data-card"><div class="ic" style="background:var(--danger-soft); color:var(--danger)">⟲</div><div><h4>重置为空白档案</h4><p>清空档案、技能、任务与项目，回到全新状态；浏览器里残留的示例数据也用它清除。</p><button class="btn ghost sm" data-action="reset-all">重置全部数据</button></div></div>' +
     '</div>' +
     '<div class="card" style="margin-top:16px"><div class="card-head"><h3>当前状态</h3></div>' +
     '<table class="tbl"><tbody>' +
@@ -1182,6 +1183,14 @@ document.addEventListener('click', e => {
     case 'sample': {
       if (confirm('载入示例数据会覆盖当前数据，继续？')) {
         state = sampleState(); save(); render(); toast('已载入示例数据');
+      }
+      break;
+    }
+    case 'reset-all': {
+      if (confirm('清空全部数据并恢复为空白档案？此操作不可撤销。')) {
+        state = emptyState();
+        save(); render(); setTab('overview');
+        toast('已重置为空白档案');
       }
       break;
     }
