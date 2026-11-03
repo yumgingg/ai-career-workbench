@@ -158,6 +158,12 @@ main{padding:22px 0 70px}
 .card-head .sub{font-size:12.5px; color:var(--muted)}
 .cols{display:grid; grid-template-columns:1.12fr .88fr; gap:16px; margin-top:16px}
 .stack{display:flex; flex-direction:column; gap:16px}
+.start-card{
+  display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:16px;
+  background:linear-gradient(100deg,#eef2ff 0%,#fff 65%); border-color:#dfe5ff;
+}
+.start-card h3{font-size:16px}
+.start-card p{color:var(--muted); font-size:12.8px; margin-top:3px}
 
 /* ---------- 进度条 ---------- */
 .bar{position:relative; height:8px; border-radius:999px; background:#eef1f7; overflow:visible}
@@ -360,6 +366,8 @@ table.tbl{width:100%; border-collapse:collapse; font-size:13px}
   .view-actions{width:100%; flex-wrap:wrap}
   .task-form{grid-template-columns:1fr 1fr}
   .task-form .btn{grid-column:1/-1}
+  .start-card{flex-direction:column; align-items:flex-start}
+  .start-card .btn{width:100%}
   .hero-meta{gap:14px}
   main{padding:18px 0 60px}
   .hero{flex-direction:column; align-items:flex-start; padding:22px}
@@ -383,6 +391,7 @@ table.tbl{width:100%; border-collapse:collapse; font-size:13px}
     </div>
     <div class="top-actions">
       <span class="save-state" id="saveState">已自动保存到本机</span>
+      <button class="btn ghost" data-action="tab" data-tab="profile">我的档案</button>
       <button class="btn ghost" data-action="export">导出数据</button>
     </div>
   </div>
@@ -537,7 +546,7 @@ function loadState(){
     const raw = localStorage.getItem(KEY);
     if (raw) return normalize(JSON.parse(raw));
   } catch (e) { /* 忽略损坏的本地数据 */ }
-  return sampleState();
+  return emptyState();
 }
 
 let state = loadState();
@@ -704,6 +713,8 @@ function viewOverview(){
   const s = stats();
   const todo = sortedTasks('todo').slice(0, 3);
   const stages = buildRoadmap(role);
+  const notStarted = !Object.values(state.skills).some(v => Number(v) > 0) &&
+                     !state.tasks.length && !state.projects.length;
 
   const gapHtml = gaps.length ? gaps.slice(0, 5).map(g => {
     const pct = Math.round(g.cur / 5 * 100);
@@ -738,6 +749,12 @@ function viewOverview(){
   return '<div class="view">' +
     '<div class="view-head"><div><h2>概览</h2><p>' + fmtDate(todayISO()) + ' · ' + nextDueText() + '</p></div>' +
     '<div class="view-actions"><button class="btn primary" data-action="tab" data-tab="roadmap">查看学习路线</button></div></div>' +
+
+    (notStarted
+      ? '<div class="card start-card"><div><h3>先花 2 分钟，建立你的第一份规划</h3>' +
+        '<p>填写基本信息和技能自评后，匹配度、技能差距与四阶段学习路线会自动生成。</p></div>' +
+        '<button class="btn primary" data-action="tab" data-tab="profile">开始填写档案</button></div>'
+      : '') +
 
     '<section class="hero"><div class="hero-body">' +
     '<span class="hero-tag">CURRENT TARGET</span>' +
@@ -1019,7 +1036,11 @@ function guideSeen(){ try { return localStorage.getItem(GUIDE_KEY) === '1'; } ca
 function markGuideSeen(){ try { localStorage.setItem(GUIDE_KEY, '1'); } catch (e) {} }
 
 function showWelcome(){
-  if (!state.demo || guideSeen()) return;
+  if (guideSeen()) return;
+  const demo = state.demo;
+  const note = demo
+    ? '当前展示的是 <b>示例数据</b>（林晓，大三），方便你先体验；数据只保存在本机浏览器，不会上传。'
+    : '这是一个本地工具：数据只保存在你的浏览器里，不会上传。先花 2 分钟填写档案，就能看到属于你的岗位匹配度。';
   $('#modalRoot').innerHTML = '<div class="overlay" data-action="close-welcome"><div class="modal" style="max-width:540px">' +
     '<div class="welcome">' +
     '<div class="welcome-logo">AI</div>' +
@@ -1030,11 +1051,11 @@ function showWelcome(){
     '<li><span class="n">2</span><div><b>看岗位匹配，确定方向</b><span>比较 7 类 AI 岗位，找到差距最大的技能</span></div></li>' +
     '<li><span class="n">3</span><div><b>生成路线，落到任务</b><span>一键把 26 周路线变成带截止日期的任务</span></div></li>' +
     '</ol>' +
-    '<div class="welcome-note">当前展示的是<b>示例数据</b>（林晓，大三），方便你先体验；数据只保存在本机浏览器，不会上传。</div>' +
+    '<div class="welcome-note">' + note + '</div>' +
     '<div class="welcome-actions">' +
     '<button class="btn ghost" data-action="welcome-guide">查看操作指南</button>' +
-    '<button class="btn ghost" data-action="close-welcome">先看看示例</button>' +
-    '<button class="btn primary" data-action="welcome-start">从零开始填写</button>' +
+    (demo ? '' : '<button class="btn ghost" data-action="welcome-sample">载入示例看看</button>') +
+    '<button class="btn primary" data-action="welcome-begin">' + (demo ? '从零开始填写' : '开始填写档案') + '</button>' +
     '</div></div></div></div>';
   document.body.style.overflow = 'hidden';
 }
@@ -1103,11 +1124,17 @@ document.addEventListener('click', e => {
   switch (action) {
     case 'close-welcome': markGuideSeen(); closeModal(); break;
     case 'welcome-guide': markGuideSeen(); closeModal(); setTab('guide'); break;
-    case 'welcome-start':
+    case 'welcome-begin':
       markGuideSeen();
-      state = emptyState();
-      save(); closeModal(); setTab('profile');
-      toast('已切换为空白档案，开始填写吧');
+      if (state.demo) { state = emptyState(); save(); }
+      closeModal(); setTab('profile');
+      toast('先填写基本信息，再给技能打分');
+      break;
+    case 'welcome-sample':
+      markGuideSeen();
+      state = sampleState(); save(); closeModal();
+      render(); setTab('overview');
+      toast('已载入示例数据，可随时在「数据」里清空');
       break;
     case 'tab': setTab(btn.dataset.tab); break;
     case 'go': setTab(btn.dataset.tab); break;
