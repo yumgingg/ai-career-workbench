@@ -290,6 +290,38 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .close{border:0;background:#f1f5f9;width:32px;height:32px;border-radius:10px;cursor:pointer;font-size:16px;color:#64748b}
 .close:hover{background:#e2e8f0}
 
+/* ---------- 欢迎弹窗 ---------- */
+.welcome{padding:28px 28px 22px}
+.welcome-logo{
+  width:46px; height:46px; border-radius:14px; display:grid; place-items:center; color:#fff; font-weight:800;
+  background:linear-gradient(135deg,#6366f1,#4f46e5 55%,#0d9488); box-shadow:0 10px 22px -10px rgba(79,70,229,.7);
+}
+.welcome h3{font-size:20px; font-weight:800; margin:14px 0 4px}
+.welcome .lead{color:var(--muted); font-size:13px}
+.steps{list-style:none; margin:18px 0 16px; padding:0; display:flex; flex-direction:column; gap:13px}
+.steps li{display:flex; gap:12px; align-items:flex-start}
+.steps .n{
+  width:26px; height:26px; border-radius:50%; background:var(--brand-soft); color:var(--brand);
+  font-weight:800; display:grid; place-items:center; flex:none; font-size:13px;
+}
+.steps b{display:block; font-size:13.5px}
+.steps span{font-size:12.5px; color:var(--muted)}
+.welcome-note{background:#f8faff; border:1px solid #e6ecff; border-radius:12px; padding:10px 12px; font-size:12.5px; color:#475569}
+.welcome-actions{display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; margin-top:18px}
+
+/* ---------- 操作指南 ---------- */
+.guide-step{display:flex; gap:14px; padding:16px 0; border-bottom:1px dashed #eef1f7}
+.guide-step:last-child{border-bottom:0; padding-bottom:4px}
+.guide-step .num{
+  width:30px; height:30px; border-radius:10px; background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff;
+  font-weight:800; display:grid; place-items:center; flex:none; font-size:14px;
+}
+.guide-step b{font-size:14px}
+.guide-step p{font-size:12.8px; color:var(--muted); margin:3px 0 8px}
+.faq{display:flex; flex-direction:column; gap:14px}
+.faq .q{font-weight:700; font-size:13px; margin-bottom:2px}
+.faq .a{font-size:12.8px; color:var(--muted)}
+
 /* ---------- 表格 ---------- */
 table.tbl{width:100%; border-collapse:collapse; font-size:13px}
 .tbl th{text-align:left; color:var(--soft); font-size:11.5px; font-weight:700; letter-spacing:.5px; padding:8px 6px; border-bottom:1px solid var(--line)}
@@ -373,6 +405,7 @@ table.tbl{width:100%; border-collapse:collapse; font-size:13px}
     <button class="tab" data-action="tab" data-tab="tasks">任务</button>
     <button class="tab" data-action="tab" data-tab="projects">项目</button>
     <button class="tab" data-action="tab" data-tab="data">数据</button>
+    <button class="tab" data-action="tab" data-tab="guide">指南</button>
   </nav>
 </div>
 
@@ -619,7 +652,7 @@ function nextDueText(){
 }
 
 /* ---------------- 渲染：公共 ---------------- */
-const TABS = ['overview','profile','roles','roadmap','tasks','projects','data'];
+const TABS = ['overview','profile','roles','roadmap','tasks','projects','data','guide'];
 let activeTab = TABS.includes(location.hash.replace('#','')) ? location.hash.replace('#','') : 'overview';
 let taskFilter = 'all';
 
@@ -894,9 +927,69 @@ function viewData(){
     '</tbody></table></div></div>';
 }
 
+/* ---------------- 视图：操作指南 ---------------- */
+function viewGuide(){
+  return '<div class="view">' +
+    '<div class="view-head"><div><h2>操作指南</h2><p>5 分钟上手：填写档案 → 查看匹配 → 生成路线 → 推进任务 → 每周复盘</p></div>' +
+    '<div class="view-actions"><button class="btn primary" data-action="tab" data-tab="profile">开始填写档案</button></div></div>' +
+
+    '<div class="card"><div class="card-head"><h3>三步开始</h3><span class="sub">推荐按顺序完成</span></div>' +
+    '<div class="guide-step"><div class="num">1</div><div><b>完善档案与技能自评</b>' +
+    '<p>填写姓名、年级、每周可投入时长，选择目标岗位；然后给 13 项技能打 0~5 分。打分越真实，匹配度和路线越准。</p>' +
+    '<button class="btn sm ghost" data-action="tab" data-tab="profile">去填写</button></div></div>' +
+    '<div class="guide-step"><div class="num">2</div><div><b>看岗位匹配，确定方向</b>' +
+    '<p>岗位匹配页按匹配度给 7 类 AI 岗位排名，点开任意岗位能看到逐项技能差距，可一键设为目标岗位。</p>' +
+    '<button class="btn sm ghost" data-action="tab" data-tab="roles">看岗位匹配</button></div></div>' +
+    '<div class="guide-step"><div class="num">3</div><div><b>生成路线，落到任务</b>' +
+    '<p>学习路线页给出 26 周四阶段安排，点「一键生成阶段任务」，路线会变成带截止日期的任务，之后在任务页逐项完成。</p>' +
+    '<button class="btn sm ghost" data-action="tab" data-tab="roadmap">去生成路线</button></div></div>' +
+    '</div>' +
+
+    '<div class="card" style="margin-top:16px"><div class="card-head"><h3>每个页面做什么</h3><span class="sub">建议使用频率</span></div>' +
+    '<table class="tbl"><thead><tr><th>页面</th><th>用途</th><th>建议频率</th></tr></thead><tbody>' +
+    '<tr><td><b>概览</b></td><td>看目标岗位匹配度、任务完成率、逾期情况和下一步做什么</td><td>每次打开</td></tr>' +
+    '<tr><td><b>我的档案</b></td><td>改基本信息、做技能自评，匹配度实时变化</td><td>每学期 / 学完一门课</td></tr>' +
+    '<tr><td><b>岗位匹配</b></td><td>比较 7 类岗位、看技能差距、切换目标</td><td>定方向时</td></tr>' +
+    '<tr><td><b>学习路线</b></td><td>查看四阶段安排并生成任务</td><td>每学期初</td></tr>' +
+    '<tr><td><b>任务</b></td><td>新增 / 完成 / 筛选任务，看逾期提醒</td><td>每天或每周</td></tr>' +
+    '<tr><td><b>项目</b></td><td>记录课程项目、竞赛、实习的产出与复盘</td><td>每个项目结束</td></tr>' +
+    '<tr><td><b>数据</b></td><td>导出 / 导入 JSON 备份，载入示例或清空</td><td>换设备前</td></tr>' +
+    '</tbody></table></div>' +
+
+    '<div class="cols" style="margin-top:16px">' +
+    '<div class="card"><div class="card-head"><h3>技能评分标准</h3></div>' +
+    '<table class="tbl"><tbody>' +
+    '<tr><td style="width:40px"><b>0</b></td><td>未接触</td></tr>' +
+    '<tr><td><b>1</b></td><td>了解概念，没动过手</td></tr>' +
+    '<tr><td><b>2</b></td><td>跟着教程做过</td></tr>' +
+    '<tr><td><b>3</b></td><td>独立完成课程项目</td></tr>' +
+    '<tr><td><b>4</b></td><td>完整项目 / 实习中用过</td></tr>' +
+    '<tr><td><b>5</b></td><td>能指导他人、有可展示成果</td></tr>' +
+    '</tbody></table>' +
+    '<p class="hint" style="margin-top:10px">匹配度 = Σ(权重 × 当前等级) ÷ Σ(权重 × 5)；核心技能权重 3，重要 2，加分 1。</p></div>' +
+
+    '<div class="card"><div class="card-head"><h3>数据与备份</h3></div>' +
+    '<p class="hint" style="line-height:2">数据只保存在你当前浏览器的 localStorage，不上传服务器。<br>' +
+    '换电脑、换浏览器或清理缓存前，请在「数据」页导出 JSON；到新设备后再导入即可恢复。<br>' +
+    '「从零开始」会清空示例数据，重新填写自己的档案。</p>' +
+    '<div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px">' +
+    '<button class="btn sm ghost" data-action="export">导出备份</button>' +
+    '<button class="btn sm ghost" data-action="tab" data-tab="data">数据管理</button></div></div>' +
+    '</div>' +
+
+    '<div class="card" style="margin-top:16px"><div class="card-head"><h3>常见问题</h3></div><div class="faq">' +
+    '<div><div class="q">老师或同学打开链接，会看到我的数据吗？</div><div class="a">不会。数据存在每个人自己的浏览器里，互不影响；第一次打开看到的是示例数据（林晓），顶部点「从零开始」即可换成自己的。</div></div>' +
+    '<div><div class="q">匹配度为什么是 33%？</div><div class="a">按目标岗位的技能权重和你的自评等级加权计算。把差距最大的几项技能分数提上去，匹配度会明显变化。</div></div>' +
+    '<div><div class="q">生成的 12 条任务是什么？</div><div class="a">来自四阶段路线：基础补齐、核心进阶、项目实战和求职冲刺，截止日期分别对应第 6 / 14 / 22 / 26 周，可在任务页修改。</div></div>' +
+    '<div><div class="q">任务逾期了怎么办？</div><div class="a">先判断是否还要做：要做就改截止日期，不做就删除；概览页会按截止日期提示最近的三件事。</div></div>' +
+    '<div><div class="q">换电脑后数据没了？</div><div class="a">localStorage 不跨设备。用「数据 → 导出 JSON」备份，在新设备「导入备份」即可。</div></div>' +
+    '</div></div>' +
+    '</div>';
+}
+
 /* ---------------- 渲染分发 ---------------- */
 function renderView(){
-  const views = { overview: viewOverview, profile: viewProfile, roles: viewRoles, roadmap: viewRoadmap, tasks: viewTasks, projects: viewProjects, data: viewData };
+  const views = { overview: viewOverview, profile: viewProfile, roles: viewRoles, roadmap: viewRoadmap, tasks: viewTasks, projects: viewProjects, data: viewData, guide: viewGuide };
   $('#main').innerHTML = (views[activeTab] || viewOverview)();
 }
 
@@ -916,6 +1009,32 @@ function openModal(html){
 function closeModal(){
   $('#modalRoot').innerHTML = '';
   document.body.style.overflow = '';
+}
+
+/* ---------------- 首次访问欢迎页 ---------------- */
+const GUIDE_KEY = 'acw-guide-seen';
+function guideSeen(){ try { return localStorage.getItem(GUIDE_KEY) === '1'; } catch (e) { return false; } }
+function markGuideSeen(){ try { localStorage.setItem(GUIDE_KEY, '1'); } catch (e) {} }
+
+function showWelcome(){
+  if (!state.demo || guideSeen()) return;
+  $('#modalRoot').innerHTML = '<div class="overlay" data-action="close-welcome"><div class="modal" style="max-width:540px">' +
+    '<div class="welcome">' +
+    '<div class="welcome-logo">AI</div>' +
+    '<h3>欢迎使用 AI Career Workbench</h3>' +
+    '<p class="lead">人工智能专业 · 职业生涯规划学习实践工作台</p>' +
+    '<ol class="steps">' +
+    '<li><span class="n">1</span><div><b>完善档案与技能自评</b><span>13 项技能打分，实时看到岗位匹配度</span></div></li>' +
+    '<li><span class="n">2</span><div><b>看岗位匹配，确定方向</b><span>比较 7 类 AI 岗位，找到差距最大的技能</span></div></li>' +
+    '<li><span class="n">3</span><div><b>生成路线，落到任务</b><span>一键把 26 周路线变成带截止日期的任务</span></div></li>' +
+    '</ol>' +
+    '<div class="welcome-note">当前展示的是<b>示例数据</b>（林晓，大三），方便你先体验；数据只保存在本机浏览器，不会上传。</div>' +
+    '<div class="welcome-actions">' +
+    '<button class="btn ghost" data-action="welcome-guide">查看操作指南</button>' +
+    '<button class="btn ghost" data-action="close-welcome">先看看示例</button>' +
+    '<button class="btn primary" data-action="welcome-start">从零开始填写</button>' +
+    '</div></div></div></div>';
+  document.body.style.overflow = 'hidden';
 }
 
 function roleModal(name){
@@ -977,9 +1096,17 @@ document.addEventListener('click', e => {
   const action = btn.dataset.action;
 
   if (action === 'close-modal') { closeModal(); return; }
-  if (btn.classList.contains('overlay')) return;
+  if (btn.classList.contains('overlay') && e.target.closest('.modal')) return;
 
   switch (action) {
+    case 'close-welcome': markGuideSeen(); closeModal(); break;
+    case 'welcome-guide': markGuideSeen(); closeModal(); setTab('guide'); break;
+    case 'welcome-start':
+      markGuideSeen();
+      state = emptyState();
+      save(); closeModal(); setTab('profile');
+      toast('已切换为空白档案，开始填写吧');
+      break;
     case 'tab': setTab(btn.dataset.tab); break;
     case 'go': setTab(btn.dataset.tab); break;
     case 'role-detail': roleModal(btn.dataset.role); break;
@@ -1143,6 +1270,7 @@ function downloadJSON(){
 
 /* ---------------- 启动 ---------------- */
 render();
+showWelcome();
 </script>
 </body>
 </html>
