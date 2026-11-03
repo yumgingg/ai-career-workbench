@@ -1,0 +1,17 @@
+# 构建产物
+*.o
+*.obj
+zysygh
+
+# 保留预编译的 Windows 程序
+!zysygh.exe
+
+# 本地数据（每个人运行后生成，不应提交）
+workbench_data.txt
+
+# 编辑器与系统文件
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db

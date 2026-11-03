@@ -1,0 +1,15 @@
+name: build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile with g++
+        run: g++ -std=c++17 -O2 -Wall -Wextra -o zysygh src/zysygh.cpp
+      - name: Smoke test
+        run: printf '7\n3\ny\n0\n6\n\n0\n' | ./zysygh
