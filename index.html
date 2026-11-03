@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Career Workbench · 人工智能专业职业生涯规划工作台</title>
+<meta name="description" content="人工智能专业职业生涯规划学习实践工作台：技能自评、岗位匹配、学习路线、任务管理、项目台账与数据看板。">
+<style>
+:root{
+  --bg:#f4f6fb; --panel:#ffffff; --ink:#0f172a; --muted:#64748b; --soft:#94a3b8;
+  --line:#e6eaf2; --brand:#4f46e5; --brand-2:#6366f1; --brand-soft:#eef2ff;
+  --teal:#0d9488; --teal-soft:#ecfdf5; --amber:#d97706; --amber-soft:#fffbeb;
+  --danger:#dc2626; --danger-soft:#fef2f2; --ok:#059669; --ok-soft:#ecfdf5;
+  --radius:18px; --shadow:0 1px 2px rgba(15,23,42,.04), 0 18px 40px -24px rgba(15,23,42,.18);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:
+    radial-gradient(1200px 600px at 10% -10%, #e0e7ff 0%, transparent 55%),
+    radial-gradient(900px 500px at 100% 0%, #ccfbf1 0%, transparent 45%),
+    var(--bg);
+  color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  font-size:14px; line-height:1.6; -webkit-font-smoothing:antialiased;
+}
+button,input,select,textarea{font:inherit; color:inherit}
+h1,h2,h3,h4,p{margin:0}
+a{color:var(--brand); text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* ---------- 容器 ---------- */
+.container{width:100%; max-width:1236px; margin:0 auto; padding:0 28px}
+
+/* ---------- 顶栏 ---------- */
+.topbar{
+  position:sticky; top:0; z-index:30; background:rgba(255,255,255,.82);
+  backdrop-filter:blur(14px); border-bottom:1px solid var(--line);
+}
+.topbar-inner{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 0}
+.brand{display:flex; align-items:center; gap:12px}
+.logo{
+  width:42px; height:42px; border-radius:13px; display:grid; place-items:center; color:#fff; font-weight:800;
+  letter-spacing:.5px; background:linear-gradient(135deg,#6366f1,#4f46e5 55%,#0d9488);
+  box-shadow:0 8px 18px -8px rgba(79,70,229,.7);
+}
+.brand h1{font-size:16px; font-weight:750; letter-spacing:.2px}
+.brand p{font-size:12px; color:var(--muted)}
+.top-actions{display:flex; align-items:center; gap:10px}
+.save-state{font-size:12px; color:var(--soft); transition:color .2s}
+.save-state.pulse{color:var(--teal)}
+.top-actions .btn{padding:8px 14px}
+
+/* ---------- 通用按钮 ---------- */
+.btn{
+  border:1px solid transparent; background:#fff; color:var(--ink); padding:9px 16px; border-radius:11px;
+  cursor:pointer; font-weight:600; font-size:13px; transition:transform .12s, box-shadow .12s, background .15s, border-color .15s;
+  box-shadow:0 1px 2px rgba(15,23,42,.06); white-space:nowrap;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn:focus-visible{outline:2px solid var(--brand); outline-offset:2px}
+.btn.primary{background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; box-shadow:0 10px 20px -10px rgba(79,70,229,.8)}
+.btn.ghost{background:#fff; border-color:var(--line); color:var(--ink)}
+.btn.ghost:hover{border-color:#c7d2fe; background:#f8faff}
+.btn.light{background:#fff; color:#312e81}
+.btn.glass{background:rgba(255,255,255,.12); color:#fff; border-color:rgba(255,255,255,.22)}
+.btn.danger{background:var(--danger); color:#fff}
+.btn.sm{padding:6px 11px; font-size:12px; border-radius:9px}
+.btn:disabled{opacity:.5; cursor:not-allowed; transform:none}
+
+/* ---------- 提示条 ---------- */
+.banner{
+  margin:16px 0 0; padding:12px 16px; border-radius:14px; display:flex; align-items:center; gap:12px;
+  background:linear-gradient(90deg,#eef2ff,#ecfeff); border:1px solid #dbe4ff; font-size:13px;
+}
+.banner .dot{width:8px;height:8px;border-radius:50%;background:var(--brand);flex:none}
+.banner b{font-weight:700}
+.banner .spacer{flex:1}
+
+/* ---------- 概览小标签 ---------- */
+.chips{display:flex; flex-wrap:wrap; gap:8px; padding:14px 0 0}
+.chip{
+  display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:999px;
+  background:#fff; border:1px solid var(--line); font-size:12.5px; color:#334155;
+  box-shadow:0 1px 2px rgba(15,23,42,.03);
+}
+.chip b{font-weight:700; color:var(--ink)}
+.chip .k{color:var(--soft)}
+.chip.accent{background:var(--brand-soft); border-color:#dfe5ff; color:#3730a3}
+
+/* ---------- 标签页 ---------- */
+.tabs{
+  display:flex; gap:4px; margin:14px 0 0; padding:5px; border-radius:14px; background:#eceff7;
+  border:1px solid #e3e7f1; overflow-x:auto; scrollbar-width:none;
+}
+.tabs::-webkit-scrollbar{display:none}
+.tab{
+  border:0; background:transparent; padding:8px 16px; border-radius:10px; cursor:pointer;
+  font-size:13px; font-weight:600; color:#5b6478; white-space:nowrap; transition:background .15s,color .15s;
+}
+.tab:hover{color:var(--ink)}
+.tab.active{background:#fff; color:var(--brand); box-shadow:0 2px 8px rgba(15,23,42,.08)}
+
+/* ---------- 主体 ---------- */
+main{padding:22px 0 70px}
+.view{animation:fadeUp .35s ease both}
+@keyframes fadeUp{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
+.view-head{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin:6px 0 18px}
+.view-head h2{font-size:22px; font-weight:750; letter-spacing:.2px}
+.view-head p{font-size:13px; color:var(--muted); margin-top:3px}
+.view-actions{display:flex; gap:10px}
+
+/* ---------- Hero ---------- */
+.hero{
+  position:relative; overflow:hidden; border-radius:22px; padding:28px; color:#fff;
+  background:linear-gradient(120deg,#0b1220 0%,#151f38 45%,#1e2a4a 100%);
+  display:flex; align-items:center; justify-content:space-between; gap:24px;
+  box-shadow:0 24px 60px -30px rgba(15,23,42,.7);
+}
+.hero::before{
+  content:""; position:absolute; width:420px; height:420px; right:-120px; top:-220px; border-radius:50%;
+  background:radial-gradient(circle, rgba(99,102,241,.55), transparent 65%);
+}
+.hero::after{
+  content:""; position:absolute; width:360px; height:360px; left:-140px; bottom:-220px; border-radius:50%;
+  background:radial-gradient(circle, rgba(13,148,136,.35), transparent 65%);
+}
+.hero-body{position:relative; z-index:1}
+.hero-tag{display:inline-block; font-size:11.5px; letter-spacing:2px; color:#a5b4fc; font-weight:700}
+.hero h2{font-size:30px; font-weight:800; margin:6px 0 8px; letter-spacing:.3px}
+.hero p{color:#cbd5e1; font-size:13.5px; max-width:520px}
+.hero-meta{display:flex; flex-wrap:wrap; gap:22px; margin:18px 0 20px; font-size:13px; color:#cbd5e1}
+.hero-meta b{font-size:20px; color:#fff; font-weight:800; margin-right:4px}
+.hero-actions{display:flex; gap:10px; flex-wrap:wrap}
+.ring{width:132px; height:132px; flex:none; position:relative; z-index:1}
+.ring circle{fill:none; stroke-width:10; stroke-linecap:round}
+.ring .bg{stroke:rgba(255,255,255,.14)}
+.ring .fg{stroke:url(#ringGrad); transform:rotate(-90deg); transform-origin:60px 60px; transition:stroke-dashoffset .8s cubic-bezier(.2,.8,.2,1)}
+.ring text{fill:#fff; text-anchor:middle}
+.ring .num{font-size:24px; font-weight:800}
+.ring .lab{font-size:10px; fill:#94a3b8; letter-spacing:1px}
+
+/* ---------- 统计卡 ---------- */
+.stat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:16px}
+.stat{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:16px 18px; box-shadow:var(--shadow)}
+.stat .label{font-size:12px; color:var(--muted); display:flex; align-items:center; gap:6px}
+.stat .value{font-size:26px; font-weight:800; margin-top:6px; letter-spacing:.3px}
+.stat .hint{font-size:12px; color:var(--soft); margin-top:2px}
+.stat .value small{font-size:13px; color:var(--soft); font-weight:600; margin-left:3px}
+
+/* ---------- 卡片 ---------- */
+.card{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow)}
+.card h3{font-size:15px; font-weight:750}
+.card-head{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px}
+.card-head .sub{font-size:12.5px; color:var(--muted)}
+.cols{display:grid; grid-template-columns:1.12fr .88fr; gap:16px; margin-top:16px}
+.stack{display:flex; flex-direction:column; gap:16px}
+
+/* ---------- 进度条 ---------- */
+.bar{position:relative; height:8px; border-radius:999px; background:#eef1f7; overflow:visible}
+.bar > i{display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#6366f1,#8b5cf6); transition:width .6s ease}
+.bar > i.teal{background:linear-gradient(90deg,#14b8a6,#0d9488)}
+.bar > i.amber{background:linear-gradient(90deg,#f59e0b,#d97706)}
+.bar .tick{position:absolute; top:-3px; width:2px; height:14px; background:#94a3b8; border-radius:2px}
+
+/* ---------- 技能差距 ---------- */
+.gap-row{padding:9px 0; border-bottom:1px dashed #eef1f7}
+.gap-row:last-child{border-bottom:0}
+.gap-top{display:flex; align-items:center; justify-content:space-between; font-size:13px; margin-bottom:7px}
+.gap-top .name{font-weight:600}
+.gap-top .lv{color:var(--muted); font-size:12px}
+.gap-top .lv b{color:var(--ink)}
+
+/* ---------- 任务行 ---------- */
+.task-list{display:flex; flex-direction:column}
+.task{display:flex; align-items:flex-start; gap:12px; padding:13px 6px; border-bottom:1px solid #f1f4f9}
+.task:last-child{border-bottom:0}
+.task:hover{background:#fafbff; border-radius:12px}
+.task.overdue{background:var(--danger-soft); border-radius:12px; border-bottom-color:transparent; margin:4px 0; padding:13px 12px}
+.check{
+  width:20px; height:20px; border-radius:7px; border:2px solid #cbd5e1; background:#fff; cursor:pointer;
+  display:grid; place-items:center; flex:none; margin-top:2px; transition:all .15s;
+}
+.check svg{opacity:0; transform:scale(.6); transition:all .15s}
+.check.on{background:var(--brand); border-color:var(--brand)}
+.check.on svg{opacity:1; transform:scale(1)}
+.task-body{flex:1; min-width:0}
+.task-title{font-size:13.5px; font-weight:600; word-break:break-word}
+.task.done .task-title{color:var(--soft); text-decoration:line-through}
+.task-meta{display:flex; flex-wrap:wrap; gap:8px; margin-top:5px; font-size:11.5px; color:var(--muted); align-items:center}
+.task-actions{display:flex; gap:6px; opacity:0; transition:opacity .15s}
+.task:hover .task-actions{opacity:1}
+
+/* ---------- 徽章 ---------- */
+.badge{display:inline-flex; align-items:center; padding:2px 9px; border-radius:999px; font-size:11px; font-weight:650; letter-spacing:.2px}
+.badge.gray{background:#f1f5f9; color:#475569}
+.badge.indigo{background:#eef2ff; color:#4338ca}
+.badge.teal{background:#ecfdf5; color:#047857}
+.badge.amber{background:#fffbeb; color:#b45309}
+.badge.pink{background:#fdf2f8; color:#be185d}
+.badge.violet{background:#f5f3ff; color:#6d28d9}
+.badge.blue{background:#eff6ff; color:#1d4ed8}
+.badge.red{background:#fef2f2; color:#b91c1c}
+.badge.green{background:#ecfdf5; color:#047857}
+
+/* ---------- 岗位卡 ---------- */
+.role-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px}
+.role-card{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:18px; box-shadow:var(--shadow); transition:transform .15s, box-shadow .15s, border-color .15s}
+.role-card:hover{transform:translateY(-2px); box-shadow:0 22px 48px -28px rgba(15,23,42,.28); border-color:#dbe4ff}
+.role-card.target{border-color:#c7d2fe; background:linear-gradient(180deg,#fbfcff,#fff)}
+.role-top{display:flex; align-items:flex-start; justify-content:space-between; gap:10px}
+.role-name{font-size:15px; font-weight:750}
+.role-rank{font-size:11px; color:var(--soft); font-weight:700; letter-spacing:1px}
+.role-score{font-size:24px; font-weight:800; color:var(--brand)}
+.role-score small{font-size:12px; color:var(--soft); font-weight:600}
+.role-sum{color:var(--muted); font-size:12.5px; margin:4px 0 12px; min-height:38px}
+.role-gaps{display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 12px}
+.role-actions{display:flex; gap:8px; justify-content:flex-end}
+
+/* ---------- 路线时间线 ---------- */
+.stage{position:relative; padding-left:26px; padding-bottom:18px}
+.stage:last-child{padding-bottom:0}
+.stage::before{content:""; position:absolute; left:6px; top:6px; bottom:-6px; width:2px; background:#e6eaf2}
+.stage:last-child::before{display:none}
+.stage .dot{position:absolute; left:0; top:5px; width:14px; height:14px; border-radius:50%; background:#fff; border:3px solid var(--brand)}
+.stage.done .dot{background:var(--brand)}
+.stage-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px}
+.stage-head h4{font-size:14px; font-weight:750}
+.stage-week{font-size:11.5px; color:var(--muted); background:#f4f6fb; padding:2px 9px; border-radius:999px}
+.route-item{display:flex; align-items:flex-start; gap:10px; padding:7px 0; font-size:13px; color:#334155}
+.route-item .mark{width:16px;height:16px;border-radius:50%;border:1.5px solid #cbd5e1;flex:none;margin-top:3px;display:grid;place-items:center;font-size:9px;color:transparent}
+.route-item.generated .mark{background:var(--ok-soft); border-color:#a7f3d0; color:#059669}
+
+/* ---------- 表单 ---------- */
+.form-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px 18px}
+label.field{display:flex; flex-direction:column; gap:6px; font-size:12.5px; color:var(--muted); font-weight:600}
+label.field input, label.field select, label.field textarea{
+  border:1px solid var(--line); background:#fbfcff; border-radius:11px; padding:10px 12px; font-size:13.5px;
+  color:var(--ink); outline:none; transition:border-color .15s, box-shadow .15s;
+}
+label.field input:focus, label.field select:focus, label.field textarea:focus{border-color:#a5b4fc; box-shadow:0 0 0 4px rgba(99,102,241,.12); background:#fff}
+label.field textarea{resize:vertical; min-height:70px}
+.task-form{grid-template-columns:2fr 1fr 1fr .7fr auto; align-items:end}
+.task-form .btn{height:42px}
+.hint{font-size:12px; color:var(--soft)}
+
+/* ---------- 技能滑块 ---------- */
+.skill-list{display:grid; grid-template-columns:1fr 1fr; gap:4px 28px; margin-top:6px}
+.skill-row{display:grid; grid-template-columns:150px 1fr 26px; align-items:center; gap:10px; padding:7px 0; border-bottom:1px dashed #f0f3f8}
+.skill-name{font-size:12.5px; font-weight:600; color:#334155}
+.skill-val{font-size:13px; font-weight:750; color:var(--brand); text-align:right}
+input[type=range]{-webkit-appearance:none; appearance:none; height:6px; border-radius:999px; background:#e9edf6; outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:#fff; border:2px solid var(--brand); box-shadow:0 2px 6px rgba(79,70,229,.35); cursor:pointer}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid var(--brand);cursor:pointer}
+
+/* ---------- 项目卡 ---------- */
+.project-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
+.project{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:18px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:8px; transition:transform .15s, box-shadow .15s}
+.project:hover{transform:translateY(-2px); box-shadow:0 22px 48px -28px rgba(15,23,42,.28)}
+.project h4{font-size:14.5px; font-weight:750; word-break:break-word}
+.project .stack-text{font-size:12px; color:var(--muted); min-height:18px}
+.project .note{font-size:12.5px; color:#475569; background:#f8fafc; border-radius:10px; padding:8px 10px; min-height:34px}
+.project .link{font-size:12px; color:var(--brand); word-break:break-all}
+.project-foot{display:flex; align-items:center; justify-content:space-between; margin-top:auto; padding-top:6px}
+.icon-btn{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:#fff;cursor:pointer;display:grid;place-items:center;color:var(--muted);transition:all .15s}
+.icon-btn:hover{border-color:#fecaca;color:var(--danger);background:#fff5f5}
+
+/* ---------- 筛选 ---------- */
+.filters{display:flex; gap:6px; flex-wrap:wrap}
+.filter{border:1px solid var(--line); background:#fff; border-radius:999px; padding:6px 13px; font-size:12.5px; cursor:pointer; color:#475569; font-weight:600}
+.filter.active{background:#111827; color:#fff; border-color:#111827}
+
+/* ---------- 数据页 ---------- */
+.data-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px}
+.data-card{display:flex; gap:14px; align-items:flex-start}
+.data-card .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--brand-soft);color:var(--brand);flex:none}
+.data-card h4{font-size:14px;font-weight:750}
+.data-card p{font-size:12.5px;color:var(--muted);margin:3px 0 10px}
+
+/* ---------- 模态框 ---------- */
+.overlay{position:fixed; inset:0; background:rgba(15,23,42,.45); backdrop-filter:blur(3px); display:grid; place-items:center; padding:20px; z-index:60; animation:fadeIn .18s ease both}
+@keyframes fadeIn{from{opacity:0} to{opacity:1}}
+.modal{background:#fff; border-radius:20px; width:min(680px,100%); max-height:86vh; overflow:auto; box-shadow:0 40px 80px -30px rgba(15,23,42,.5); animation:pop .22s cubic-bezier(.2,.9,.3,1.2) both}
+@keyframes pop{from{opacity:0; transform:translateY(14px) scale(.98)} to{opacity:1; transform:none}}
+.modal-head{display:flex; align-items:center; justify-content:space-between; padding:18px 22px; border-bottom:1px solid var(--line); position:sticky; top:0; background:#fff; z-index:1}
+.modal-head h3{font-size:16px; font-weight:750}
+.modal-body{padding:20px 22px}
+.modal-foot{display:flex; justify-content:flex-end; gap:10px; padding:14px 22px; border-top:1px solid var(--line); position:sticky; bottom:0; background:#fff}
+.close{border:0;background:#f1f5f9;width:32px;height:32px;border-radius:10px;cursor:pointer;font-size:16px;color:#64748b}
+.close:hover{background:#e2e8f0}
+
+/* ---------- 表格 ---------- */
+table.tbl{width:100%; border-collapse:collapse; font-size:13px}
+.tbl th{text-align:left; color:var(--soft); font-size:11.5px; font-weight:700; letter-spacing:.5px; padding:8px 6px; border-bottom:1px solid var(--line)}
+.tbl td{padding:10px 6px; border-bottom:1px solid #f1f4f9; vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+
+/* ---------- 空状态 ---------- */
+.empty{border:1.5px dashed #dbe4f0; border-radius:16px; padding:28px; text-align:center; color:var(--muted); font-size:13px; background:#fbfcff}
+
+/* ---------- Toast ---------- */
+#toast{
+  position:fixed; left:50%; bottom:30px; transform:translate(-50%,20px); background:#0f172a; color:#fff;
+  padding:11px 20px; border-radius:12px; font-size:13px; opacity:0; pointer-events:none; transition:all .25s; z-index:90;
+  box-shadow:0 18px 40px -18px rgba(15,23,42,.8);
+}
+#toast.show{opacity:1; transform:translate(-50%,0)}
+
+/* ---------- 响应式 ---------- */
+@media (max-width:980px){
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
+  .role-grid,.project-grid{grid-template-columns:1fr}
+  .cols{grid-template-columns:1fr}
+  .skill-list{grid-template-columns:1fr}
+  .data-grid{grid-template-columns:1fr}
+}
+@media (max-width:720px){
+  .container{padding:0 16px}
+  .topbar-inner{padding:12px 0; flex-wrap:wrap; gap:10px}
+  .top-actions .save-state{display:none}
+  .brand p{display:none}
+  .banner{flex-wrap:wrap; gap:10px}
+  .banner .spacer{display:none}
+  .view-head{flex-direction:column; align-items:flex-start; gap:10px}
+  .view-actions{width:100%; flex-wrap:wrap}
+  .task-form{grid-template-columns:1fr 1fr}
+  .task-form .btn{grid-column:1/-1}
+  .hero-meta{gap:14px}
+  main{padding:18px 0 60px}
+  .hero{flex-direction:column; align-items:flex-start; padding:22px}
+  .hero h2{font-size:24px}
+  .ring{align-self:center}
+  .form-grid{grid-template-columns:1fr}
+  .skill-row{grid-template-columns:110px 1fr 24px}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="container topbar-inner">
+    <div class="brand">
+      <div class="logo">AI</div>
+      <div>
+        <h1>AI Career Workbench</h1>
+        <p>人工智能专业 · 职业生涯规划学习实践工作台</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <span class="save-state" id="saveState">已自动保存到本机</span>
+      <button class="btn ghost" data-action="export">导出数据</button>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="banner" id="demoBanner" hidden>
+    <span class="dot"></span>
+    <span>当前展示的是<b>示例数据</b>（林晓，大三）。所有数据只保存在你的浏览器里，不会上传到任何服务器。</span>
+    <span class="spacer"></span>
+    <button class="btn sm ghost" data-action="dismiss-banner">先看看</button>
+    <button class="btn sm primary" data-action="start-fresh">从零开始</button>
+  </div>
+
+  <div class="chips" id="chips"></div>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-action="tab" data-tab="overview">概览</button>
+    <button class="tab" data-action="tab" data-tab="profile">我的档案</button>
+    <button class="tab" data-action="tab" data-tab="roles">岗位匹配</button>
+    <button class="tab" data-action="tab" data-tab="roadmap">学习路线</button>
+    <button class="tab" data-action="tab" data-tab="tasks">任务</button>
+    <button class="tab" data-action="tab" data-tab="projects">项目</button>
+    <button class="tab" data-action="tab" data-tab="data">数据</button>
+  </nav>
+</div>
+
+<main id="main" class="container"></main>
+
+<div id="modalRoot"></div>
+<div id="toast"></div>
+<input type="file" id="importFile" accept="application/json,.json" hidden>
+
+<script>
+/* ============================================================
+   AI Career Workbench · 纯静态单页版
+   数据保存在 localStorage，无后端、无第三方依赖。
+   ============================================================ */
+
+const KEY = 'ai-career-workbench-v1';
+const DAY = 86400000;
+
+const SKILLS = [
+  '数学与统计基础','Python 编程','数据结构与算法','机器学习','深度学习',
+  '计算机视觉','自然语言处理','大模型与提示工程','数据工程与 SQL','MLOps 与工程化',
+  '论文阅读与复现','产品与业务理解','沟通与表达'
+];
+
+const ROLES = [
+  { name:'机器学习算法工程师', summary:'训练与调优模型，把算法落到真实业务指标上',
+    needs:[['数学与统计基础',3],['Python 编程',3],['数据结构与算法',2],['机器学习',3],['深度学习',3],['数据工程与 SQL',1],['论文阅读与复现',1],['MLOps 与工程化',1]] },
+  { name:'计算机视觉工程师', summary:'检测、分割、OCR、多模态视觉的工程落地',
+    needs:[['Python 编程',3],['深度学习',3],['计算机视觉',3],['数学与统计基础',2],['论文阅读与复现',2],['MLOps 与工程化',2],['数据结构与算法',1]] },
+  { name:'NLP / 大模型工程师', summary:'文本理解、RAG、微调与 Agent 应用开发',
+    needs:[['Python 编程',3],['深度学习',3],['自然语言处理',3],['大模型与提示工程',3],['论文阅读与复现',2],['MLOps 与工程化',2],['数据结构与算法',1]] },
+  { name:'数据科学家', summary:'用统计与数据驱动业务决策，偏分析与实验设计',
+    needs:[['数学与统计基础',3],['Python 编程',3],['数据工程与 SQL',3],['机器学习',3],['产品与业务理解',2],['沟通与表达',2]] },
+  { name:'MLOps / AI 平台工程师', summary:'训练平台、推理服务与模型工程化基础设施',
+    needs:[['MLOps 与工程化',3],['Python 编程',2],['数据结构与算法',2],['数据工程与 SQL',2],['深度学习',1],['沟通与表达',1]] },
+  { name:'AI 产品经理', summary:'定义 AI 产品，评估可行性、体验与商业价值',
+    needs:[['产品与业务理解',3],['沟通与表达',3],['大模型与提示工程',2],['机器学习',1],['数据工程与 SQL',1]] },
+  { name:'科研 / 读研深造', summary:'论文复现、原创研究与学术表达',
+    needs:[['数学与统计基础',3],['机器学习',3],['深度学习',3],['论文阅读与复现',3],['Python 编程',2],['沟通与表达',2]] }
+];
+
+const CATEGORIES = ['课程','项目','竞赛','实习','科研','求职','其他'];
+const CAT_CLASS = {课程:'indigo',项目:'teal',竞赛:'amber',实习:'pink',科研:'violet',求职:'blue',其他:'gray'};
+const STAGES = ['构思中','进行中','已完成','已上线'];
+const STAGE_CLASS = ['gray','indigo','teal','green'];
+const GRADES = ['大一','大二','大三','大四','研一','研二','研三'];
+
+/* ---------------- 工具 ---------------- */
+const $ = (s, r=document) => r.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad2 = n => String(n).padStart(2,'0');
+function localISO(d){ return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate()); }
+function todayISO(){ return localISO(new Date()); }
+function parseISO(s){ const p = String(s).split('-').map(Number); return Date.UTC(p[0], (p[1]||1)-1, p[2]||1); }
+function daysUntil(iso){ return Math.round((parseISO(iso) - parseISO(todayISO()))/DAY); }
+function addDaysISO(n){ return localISO(new Date(Date.now() + n*DAY)); }
+function fmtDate(iso){
+  const d = new Date(parseISO(iso));
+  return iso + ' 周' + '日一二三四五六'[d.getUTCDay()];
+}
+function remainText(iso){
+  const d = daysUntil(iso);
+  if (d < 0) return '逾期 ' + (-d) + ' 天';
+  if (d === 0) return '今天到期';
+  return '剩 ' + d + ' 天';
+}
+function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+
+/* ---------------- 数据 ---------------- */
+function blankSkills(){ const o = {}; SKILLS.forEach(s => o[s] = 0); return o; }
+
+function emptyState(){
+  return {
+    version: 1, demo: false,
+    profile: { name:'同学', grade:'大三', weeklyHours:10, targetRole:'NLP / 大模型工程师' },
+    skills: blankSkills(), tasks: [], projects: [], nextTaskId: 1, nextProjectId: 1
+  };
+}
+
+function sampleState(){
+  const s = emptyState();
+  s.demo = true;
+  s.profile = { name:'林晓', grade:'大三', weeklyHours:15, targetRole:'NLP / 大模型工程师' };
+  s.skills = { '数学与统计基础':2, 'Python 编程':3, '数据结构与算法':2, '机器学习':2, '深度学习':1,
+               '计算机视觉':0, '自然语言处理':2, '大模型与提示工程':2, '数据工程与 SQL':1,
+               'MLOps 与工程化':0, '论文阅读与复现':1, '产品与业务理解':1, '沟通与表达':2 };
+  s.tasks = [
+    { id:1, title:'完成《动手学深度学习》第 5-6 章并跑通示例', category:'课程', due:addDaysISO(10), done:false, hours:12 },
+    { id:2, title:'手撕 LeetCode 热题 100 中的 20 道', category:'求职', due:addDaysISO(21), done:false, hours:20 },
+    { id:3, title:'复现一篇 RAG 论文并写一篇技术博客', category:'科研', due:addDaysISO(30), done:false, hours:24 },
+    { id:4, title:'个人博客上线，发布项目复盘', category:'项目', due:addDaysISO(-3), done:true, hours:6 },
+    { id:5, title:'参加校内 AI 创新赛初赛', category:'竞赛', due:addDaysISO(14), done:false, hours:16 },
+    { id:6, title:'整理简历第一版（含 2 个项目）', category:'求职', due:addDaysISO(40), done:false, hours:5 }
+  ];
+  s.nextTaskId = 7;
+  s.projects = [
+    { id:1, name:'中文医疗问答 RAG', stack:'Python / LangChain / FAISS', stage:1, link:'github.com/linxiao/rag-medqa', note:'数据清洗完成，召回率待优化' },
+    { id:2, name:'猫狗图像分类 baseline', stack:'PyTorch / ResNet18', stage:2, link:'github.com/linxiao/cv-baseline', note:'验证集 94.2%' },
+    { id:3, name:'校园课程助手 Agent', stack:'Python / Function Calling', stage:0, link:'', note:'需求调研中' }
+  ];
+  s.nextProjectId = 4;
+  return s;
+}
+
+function normalize(s){
+  const base = emptyState();
+  if (!s || typeof s !== 'object') return base;
+  const out = { ...base, ...s };
+  out.profile = { ...base.profile, ...(s.profile || {}) };
+  out.skills = { ...blankSkills(), ...(s.skills || {}) };
+  out.tasks = Array.isArray(s.tasks) ? s.tasks.filter(t => t && t.title).map(t => ({
+    id: Number(t.id) || 0, title: String(t.title), category: CATEGORIES.includes(t.category) ? t.category : '其他',
+    due: /^\d{4}-\d{2}-\d{2}$/.test(t.due || '') ? t.due : addDaysISO(30),
+    done: !!t.done, hours: Number(t.hours) || 0
+  })) : [];
+  out.projects = Array.isArray(s.projects) ? s.projects.filter(p => p && p.name).map(p => ({
+    id: Number(p.id) || 0, name: String(p.name), stack: String(p.stack || ''),
+    stage: clamp(Number(p.stage) || 0, 0, 3), link: String(p.link || ''), note: String(p.note || '')
+  })) : [];
+  out.nextTaskId = Math.max(Number(s.nextTaskId) || 1, ...out.tasks.map(t => t.id + 1), 1);
+  out.nextProjectId = Math.max(Number(s.nextProjectId) || 1, ...out.projects.map(p => p.id + 1), 1);
+  return out;
+}
+
+function loadState(){
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) return normalize(JSON.parse(raw));
+  } catch (e) { /* 忽略损坏的本地数据 */ }
+  return sampleState();
+}
+
+let state = loadState();
+
+function save(){
+  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+  flashSaved();
+}
+
+function flashSaved(){
+  const el = $('#saveState');
+  if (!el) return;
+  el.textContent = '已自动保存到本机';
+  el.classList.add('pulse');
+  clearTimeout(flashSaved._t);
+  flashSaved._t = setTimeout(() => el.classList.remove('pulse'), 700);
+}
+
+/* ---------------- 业务计算 ---------------- */
+function roleByName(name){ return ROLES.find(r => r.name === name) || null; }
+function levelOf(skill){ return clamp(Number(state.skills[skill] || 0), 0, 5); }
+function requiredLevel(w){ return w >= 3 ? 4 : (w === 2 ? 3 : 2); }
+
+function roleMatch(role){
+  let got = 0, total = 0;
+  role.needs.forEach(([s,w]) => { got += w * Math.min(levelOf(s), 5); total += w * 5; });
+  return total ? Math.round(100 * got / total) : 0;
+}
+
+function gapsOf(role){
+  return role.needs.map(([skill,w]) => ({ skill, w, cur: levelOf(skill), need: requiredLevel(w) }))
+    .filter(g => g.cur < g.need)
+    .sort((a,b) => (b.need - b.cur) - (a.need - a.cur) || b.w - a.w);
+}
+
+function buildRoadmap(role){
+  const stages = [
+    { title:'阶段一 · 基础夯实', weeks:'第 1–6 周', end:6, items:[] },
+    { title:'阶段二 · 核心进阶', weeks:'第 7–14 周', end:14, items:[] },
+    { title:'阶段三 · 项目实战', weeks:'第 15–22 周', end:22, items:[] },
+    { title:'阶段四 · 求职冲刺', weeks:'第 23–26 周', end:26, items:[] }
+  ];
+  const needs = [...role.needs].sort((a,b) => b[1] - a[1]);
+  let foundation = 0;
+  needs.forEach(([skill,w]) => {
+    const cur = levelOf(skill), need = requiredLevel(w);
+    if (cur >= need) return;
+    const text = (cur <= 1 ? '补齐' : '进阶') + '「' + skill + '」：当前 ' + cur + ' 分 → 目标 ' + need + ' 分';
+    if (cur <= 1 && foundation < 4) { stages[0].items.push({ skill, text }); foundation++; }
+    else stages[1].items.push({ skill, text });
+  });
+  needs.slice(0, 3).forEach(([skill]) => stages[2].items.push({
+    skill, text: '围绕「' + skill + '」做一个可展示项目（数据→训练→评估→报告/部署）'
+  }));
+  stages[3].items.push({ skill:'', text: '整理 1 页简历：突出 ' + role.name + ' 相关的 2 个项目与量化结果' });
+  stages[3].items.push({ skill:'', text: '面试准备：ML 基础 8 题 + 项目深挖 5 问 + 手撕代码 20 题' });
+  stages[3].items.push({ skill:'', text: '投递与复盘：每周投 5 家，记录面试问题并逐条补齐' });
+  if (!stages[0].items.length && !stages[1].items.length) {
+    stages[0].items.push({ skill:'', text: '当前技能已覆盖该岗位基础要求，直接进入项目实战，保持每周复盘' });
+  }
+  return stages;
+}
+
+function taskForItem(item){
+  return state.tasks.find(t => t.title === item.text || (item.skill && t.title.indexOf('「' + item.skill + '」') >= 0)) || null;
+}
+
+function generateTasks(){
+  const role = roleByName(state.profile.targetRole);
+  if (!role) return 0;
+  const stages = buildRoadmap(role);
+  const cats = ['课程','课程','项目','求职'];
+  const hours = [18, 18, 36, 6];
+  let added = 0;
+  stages.forEach((st, si) => {
+    st.items.forEach(it => {
+      const cat = cats[si];
+      const exists = state.tasks.some(t => t.title === it.text ||
+        (it.skill && t.category === cat && t.title.indexOf('「' + it.skill + '」') >= 0));
+      if (exists) return;
+      state.tasks.push({ id: state.nextTaskId++, title: it.text, category: cat, due: addDaysISO(st.end * 7), done: false, hours: hours[si] });
+      added++;
+    });
+  });
+  if (added) save();
+  return added;
+}
+
+function sortedTasks(filter){
+  const f = filter || 'all';
+  const list = state.tasks.filter(t => {
+    if (f === 'todo') return !t.done;
+    if (f === 'done') return t.done;
+    if (f === 'overdue') return !t.done && daysUntil(t.due) < 0;
+    return true;
+  });
+  return list.sort((a,b) => (Number(a.done) - Number(b.done)) || String(a.due).localeCompare(String(b.due)) || a.id - b.id);
+}
+
+function stats(){
+  const total = state.tasks.length;
+  const done = state.tasks.filter(t => t.done).length;
+  const overdue = state.tasks.filter(t => !t.done && daysUntil(t.due) < 0).length;
+  const hoursDone = state.tasks.filter(t => t.done).reduce((a,t) => a + Number(t.hours || 0), 0);
+  const hoursPlan = state.tasks.reduce((a,t) => a + Number(t.hours || 0), 0);
+  return { total, done, overdue, pct: total ? Math.round(100 * done / total) : 0, hoursDone, hoursPlan };
+}
+
+function nextDueText(){
+  const todo = sortedTasks('todo');
+  if (!todo.length) return '暂无待办任务';
+  const d = daysUntil(todo[0].due);
+  return d < 0 ? '有任务已逾期' : (d === 0 ? '今天有任务到期' : '最近截止还有 ' + d + ' 天');
+}
+
+/* ---------------- 渲染：公共 ---------------- */
+const TABS = ['overview','profile','roles','roadmap','tasks','projects','data'];
+let activeTab = TABS.includes(location.hash.replace('#','')) ? location.hash.replace('#','') : 'overview';
+let taskFilter = 'all';
+
+function render(){
+  renderChips();
+  renderBanner();
+  renderView();
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === activeTab));
+}
+
+function renderChips(){
+  const role = roleByName(state.profile.targetRole);
+  const m = role ? roleMatch(role) : 0;
+  const s = stats();
+  $('#chips').innerHTML = [
+    '<span class="chip"><span class="k">学生</span><b>' + esc(state.profile.name) + '</b></span>',
+    '<span class="chip"><span class="k">年级</span><b>' + esc(state.profile.grade) + '</b></span>',
+    '<span class="chip"><span class="k">每周投入</span><b>' + esc(state.profile.weeklyHours) + ' h</b></span>',
+    '<span class="chip"><span class="k">目标岗位</span><b>' + esc(state.profile.targetRole) + '</b></span>',
+    '<span class="chip accent"><span class="k">匹配度</span><b id="chipMatch">' + m + '%</b></span>',
+    '<span class="chip"><span class="k">任务</span><b>' + s.done + '/' + s.total + '</b></span>'
+  ].join('');
+}
+
+function renderBanner(){
+  const el = $('#demoBanner');
+  el.hidden = !state.demo;
+}
+
+function ring(m){
+  const C = 2 * Math.PI * 52;
+  const off = C * (1 - m / 100);
+  return '<svg class="ring" viewBox="0 0 120 120" aria-label="匹配度 ' + m + '%">' +
+    '<defs><linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">' +
+    '<stop offset="0%" stop-color="#a5b4fc"/><stop offset="100%" stop-color="#22d3ee"/></linearGradient></defs>' +
+    '<circle class="bg" cx="60" cy="60" r="52"></circle>' +
+    '<circle class="fg" cx="60" cy="60" r="52" stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + off.toFixed(1) + '"></circle>' +
+    '<text class="num" x="60" y="62">' + m + '%</text>' +
+    '<text class="lab" x="60" y="80">MATCH</text></svg>';
+}
+
+/* ---------------- 视图：概览 ---------------- */
+function viewOverview(){
+  const role = roleByName(state.profile.targetRole) || ROLES[0];
+  const m = roleMatch(role);
+  const gaps = gapsOf(role);
+  const s = stats();
+  const todo = sortedTasks('todo').slice(0, 3);
+  const stages = buildRoadmap(role);
+
+  const gapHtml = gaps.length ? gaps.slice(0, 5).map(g => {
+    const pct = Math.round(g.cur / 5 * 100);
+    const tick = Math.round(g.need / 5 * 100);
+    return '<div class="gap-row">' +
+      '<div class="gap-top"><span class="name">' + esc(g.skill) + '</span>' +
+      '<span class="lv"><b>' + g.cur + '</b> / ' + g.need + '</span></div>' +
+      '<div class="bar"><i style="width:' + pct + '%"></i><span class="tick" style="left:' + tick + '%" title="目标 ' + g.need + ' 分"></span></div>' +
+      '</div>';
+  }).join('') : '<div class="empty">该岗位所需技能均已达到建议水平，可以专注于项目与面试。</div>';
+
+  const taskHtml = todo.length ? '<div class="task-list">' + todo.map(t => {
+    const od = daysUntil(t.due) < 0;
+    return '<div class="task' + (od ? ' overdue' : '') + '">' +
+      '<div class="task-body"><div class="task-title">' + esc(t.title) + '</div>' +
+      '<div class="task-meta"><span class="badge ' + (CAT_CLASS[t.category] || 'gray') + '">' + esc(t.category) + '</span>' +
+      '<span>' + remainText(t.due) + '</span><span>' + Number(t.hours || 0) + 'h</span></div></div>' +
+      '<button class="btn sm ghost" data-action="toggle-task" data-id="' + t.id + '">完成</button></div>';
+  }).join('') + '</div>' : '<div class="empty">待办已清空，可以更新技能自评或补充新项目。</div>';
+
+  const stageHtml = stages.map((st, i) => {
+    const total = st.items.length;
+    const done = st.items.filter(it => taskForItem(it)).length;
+    const pct = total ? Math.round(100 * done / total) : 0;
+    return '<div style="flex:1; min-width:150px">' +
+      '<div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:8px">' +
+      '<span style="font-weight:700">' + st.title.replace('阶段', '') + '</span><span style="color:var(--soft)">' + done + '/' + total + '</span></div>' +
+      '<div class="bar"><i class="' + (i === 3 ? 'teal' : '') + '" style="width:' + pct + '%"></i></div>' +
+      '<div style="font-size:11px; color:var(--soft); margin-top:6px">' + st.weeks + '</div></div>';
+  }).join('');
+
+  return '<div class="view">' +
+    '<div class="view-head"><div><h2>概览</h2><p>' + fmtDate(todayISO()) + ' · ' + nextDueText() + '</p></div>' +
+    '<div class="view-actions"><button class="btn primary" data-action="tab" data-tab="roadmap">查看学习路线</button></div></div>' +
+
+    '<section class="hero"><div class="hero-body">' +
+    '<span class="hero-tag">CURRENT TARGET</span>' +
+    '<h2>' + esc(role.name) + '</h2>' +
+    '<p>' + esc(role.summary) + '</p>' +
+    '<div class="hero-meta"><span><b>' + m + '%</b>匹配度</span><span><b>' + gaps.length + '</b>项技能差距</span>' +
+    '<span><b>' + s.done + '</b>项任务已完成</span></div>' +
+    '<div class="hero-actions">' +
+    '<button class="btn light" data-action="tab" data-tab="profile">更新技能自评</button>' +
+    '<button class="btn glass" data-action="tab" data-tab="roles">换个岗位看看</button></div>' +
+    '</div>' + ring(m) + '</section>' +
+
+    '<div class="stat-grid">' +
+    '<div class="stat"><div class="label">任务完成率</div><div class="value">' + s.pct + '<small>%</small></div><div class="hint">' + s.done + ' / ' + s.total + ' 已完成</div></div>' +
+    '<div class="stat"><div class="label">逾期任务</div><div class="value" style="color:' + (s.overdue ? 'var(--danger)' : 'var(--ink)') + '">' + s.overdue + '</div><div class="hint">' + (s.overdue ? '需要重排或尽快处理' : '进度健康') + '</div></div>' +
+    '<div class="stat"><div class="label">实践项目</div><div class="value">' + state.projects.length + '</div><div class="hint">' + state.projects.filter(p => p.stage === 1).length + ' 个进行中</div></div>' +
+    '<div class="stat"><div class="label">已投入工时</div><div class="value">' + s.hoursDone + '<small>h</small></div><div class="hint">计划共 ' + s.hoursPlan + ' h</div></div>' +
+    '</div>' +
+
+    '<div class="cols">' +
+    '<div class="card"><div class="card-head"><h3>技能差距</h3><span class="sub">' + esc(role.name) + '</span></div>' + gapHtml + '</div>' +
+    '<div class="card"><div class="card-head"><h3>接下来做什么</h3><span class="sub">按截止日期排序</span></div>' + taskHtml + '</div>' +
+    '</div>' +
+
+    '<div class="card" style="margin-top:16px"><div class="card-head"><h3>四阶段推进</h3><span class="sub">共 26 周 · 每周 ' + state.profile.weeklyHours + ' 小时</span></div>' +
+    '<div style="display:flex; gap:18px; flex-wrap:wrap">' + stageHtml + '</div>' +
+    (stages.reduce((a, st) => a + st.items.filter(it => !!taskForItem(it)).length, 0) === 0
+      ? '<div class="hint" style="margin-top:14px; display:flex; align-items:center; gap:10px">还没有把学习路线落成任务' +
+        '<button class="btn sm primary" data-action="tab" data-tab="roadmap">去生成</button></div>'
+      : '') +
+    '</div>' +
+    '</div>';
+}
+
+/* ---------------- 视图：档案 ---------------- */
+function viewProfile(){
+  const role = roleByName(state.profile.targetRole);
+  const m = role ? roleMatch(role) : 0;
+  const skillRows = SKILLS.map(s =>
+    '<div class="skill-row"><div class="skill-name">' + esc(s) + '</div>' +
+    '<input type="range" min="0" max="5" step="1" value="' + levelOf(s) + '" data-skill="' + esc(s) + '" aria-label="' + esc(s) + '">' +
+    '<div class="skill-val" data-val="' + esc(s) + '">' + levelOf(s) + '</div></div>'
+  ).join('');
+
+  return '<div class="view">' +
+    '<div class="view-head"><div><h2>我的档案</h2><p>技能自评会实时影响岗位匹配度与学习路线</p></div>' +
+    '<div class="view-actions"><span class="chip accent">当前匹配度 <b id="profileMatch" style="margin-left:6px">' + m + '%</b></span></div></div>' +
+
+    '<div class="card"><div class="card-head"><h3>基本信息</h3><span class="sub">修改后自动保存</span></div>' +
+    '<div class="form-grid">' +
+    '<label class="field">姓名<input data-field="name" value="' + esc(state.profile.name) + '" maxlength="20"></label>' +
+    '<label class="field">年级<select data-field="grade">' + GRADES.map(g => '<option' + (g === state.profile.grade ? ' selected' : '') + '>' + g + '</option>').join('') + '</select></label>' +
+    '<label class="field">每周可投入（小时）<input type="number" min="1" max="80" data-field="weeklyHours" value="' + esc(state.profile.weeklyHours) + '"></label>' +
+    '<label class="field">目标岗位<select data-field="targetRole">' + ROLES.map(r => '<option' + (r.name === state.profile.targetRole ? ' selected' : '') + '>' + esc(r.name) + '</option>').join('') + '</select></label>' +
+    '</div></div>' +
+
+    '<div class="card" style="margin-top:16px"><div class="card-head"><h3>技能自评</h3><span class="hint">0 未接触 · 1 了解概念 · 2 跟教程做过 · 3 独立完成课程项目 · 4 完整项目/实习 · 5 可指导他人</span></div>' +
+    '<div class="skill-list">' + skillRows + '</div></div>' +
+    '</div>';
+}
+
+/* ---------------- 视图：岗位匹配 ---------------- */
+function viewRoles(){
+  const ranked = ROLES.map(r => ({ r, m: roleMatch(r), gaps: gapsOf(r) }))
+    .sort((a,b) => b.m - a.m);
+  const cards = ranked.map((x, i) => {
+    const target = x.r.name === state.profile.targetRole;
+    const gapChips = x.gaps.slice(0, 3).map(g => '<span class="badge gray">' + esc(g.skill) + ' ' + g.cur + '/' + g.need + '</span>').join('');
+    return '<div class="role-card' + (target ? ' target' : '') + '">' +
+      '<div class="role-top"><div><div class="role-rank">NO.' + (i + 1) + (target ? ' · 当前目标' : '') + '</div>' +
+      '<div class="role-name">' + esc(x.r.name) + '</div></div>' +
+      '<div class="role-score">' + x.m + '<small>%</small></div></div>' +
+      '<div class="role-sum">' + esc(x.r.summary) + '</div>' +
+      '<div class="bar"><i style="width:' + x.m + '%"></i></div>' +
+      '<div class="role-gaps">' + (x.gaps.length ? gapChips : '<span class="badge green">技能已达标</span>') + '</div>' +
+      '<div class="role-actions">' +
+      '<button class="btn sm ghost" data-action="role-detail" data-role="' + esc(x.r.name) + '">查看详情</button>' +
+      (target ? '' : '<button class="btn sm primary" data-action="set-target" data-role="' + esc(x.r.name) + '">设为目标</button>') +
+      '</div></div>';
+  }).join('');
+
+  return '<div class="view">' +
+    '<div class="view-head"><div><h2>岗位匹配</h2><p>匹配度 = 岗位所需技能加权得分 ÷ 满分（核心 ×3 / 重要 ×2 / 加分 ×1）</p></div>' +
+    '<div class="view-actions"><button class="btn ghost" data-action="tab" data-tab="profile">调整技能自评</button></div></div>' +
+    '<div class="role-grid">' + cards + '</div></div>';
+}
+
+/* ---------------- 视图：学习路线 ---------------- */
+function viewRoadmap(){
+  const role = roleByName(state.profile.targetRole) || ROLES[0];
+  const stages = buildRoadmap(role);
+  const generated = stages.reduce((a, st) => a + st.items.filter(it => taskForItem(it)).length, 0);
+  const total = stages.reduce((a, st) => a + st.items.length, 0);
+
+  const html = stages.map((st, i) => {
+    const items = st.items.map(it => {
+      const has = !!taskForItem(it);
+      return '<div class="route-item' + (has ? ' generated' : '') + '">' +
+        '<span class="mark">' + (has ? '✓' : '') + '</span><span>' + esc(it.text) + '</span>' +
+        (has ? '<span class="badge green" style="margin-left:auto">已生成任务</span>' : '') + '</div>';
+    }).join('');
+    return '<div class="stage' + (i === 0 ? '' : '') + '"><span class="dot"></span>' +
+      '<div class="stage-head"><h4>' + st.title + '</h4><span class="stage-week">' + st.weeks + '</span></div>' + items + '</div>';
+  }).join('');
+
+  return '<div class="view">' +
+    '<div class="view-head"><div><h2>学习路线 · ' + esc(role.name) + '</h2><p>共 26 周，按每周 ' + state.profile.weeklyHours + ' 小时设计 · 已生成任务 ' + generated + '/' + total + '</p></div>' +
+    '<div class="view-actions"><button class="btn primary" data-action="gen-tasks">一键生成阶段任务</button></div></div>' +
+    '<div class="card">' + html + '</div>' +
+    '<p class="hint" style="margin-top:14px">任务生成后会出现在「任务」中，截止日期分别对应第 6 / 14 / 22 / 26 周；重复点击不会产生重复任务。</p>' +
+    '</div>';
+}
+
+/* ---------------- 视图：任务 ---------------- */
+function viewTasks(){
+  const s = stats();
+  const filters = [['all','全部'],['todo','待办'],['done','已完成'],['overdue','逾期']].map(([k,label]) =>
+    '<button class="filter' + (taskFilter === k ? ' active' : '') + '" data-action="filter" data-filter="' + k + '">' + label + '</button>'
+  ).join('');
+
+  const list = sortedTasks(taskFilter);
+  const rows = list.length ? list.map(t => {
+    const od = !t.done && daysUntil(t.due) < 0;
+    return '<div class="task' + (t.done ? ' done' : '') + (od ? ' overdue' : '') + '">' +
+      '<button class="check' + (t.done ? ' on' : '') + '" data-action="toggle-task" data-id="' + t.id + '" aria-label="切换完成">' +
+      '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>' +
+      '<div class="task-body"><div class="task-title">' + esc(t.title) + '</div>' +
+      '<div class="task-meta"><span class="badge ' + (CAT_CLASS[t.category] || 'gray') + '">' + esc(t.category) + '</span>' +
+      '<span>' + fmtDate(t.due) + '</span><span' + (od ? ' style="color:var(--danger);font-weight:700"' : '') + '>' + (t.done ? '已完成' : remainText(t.due)) + '</span>' +
+      '<span>' + Number(t.hours || 0) + 'h</span></div></div>' +
+      '<div class="task-actions"><button class="icon-btn" data-action="del-task" data-id="' + t.id + '" title="删除">' +
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg></button></div>' +
+      '</div>';
+  }).join('') : '<div class="empty">没有符合条件的任务。可以在上方新增，或到「学习路线」一键生成。</div>';
+
+  return '<div class="view">' +
+    '<div class="view-head"><div><h2>任务</h2><p>共 ' + s.total + ' 项 · 已完成 ' + s.done + ' · 逾期 ' + s.overdue + ' · 完成率 ' + s.pct + '%</p></div>' +
+    '<div class="view-actions"><div class="filters">' + filters + '</div></div></div>' +
+
+    '<div class="card" style="margin-bottom:16px"><form id="taskForm" class="form-grid task-form">' +
+    '<label class="field">任务标题<input name="title" placeholder="例如：复现一篇 RAG 论文" maxlength="80" required></label>' +
+    '<label class="field">分类<select name="category">' + CATEGORIES.map(c => '<option>' + c + '</option>').join('') + '</select></label>' +
+    '<label class="field">截止日期<input type="date" name="due" value="' + addDaysISO(30) + '" required></label>' +
+    '<label class="field">工时(h)<input type="number" name="hours" min="0.5" max="500" step="0.5" value="8"></label>' +
+    '<button class="btn primary" type="submit" style="height:42px">添加</button>' +
+    '</form></div>' +
+
+    '<div class="card">' + rows + '</div></div>';
+}
+
+/* ---------------- 视图：项目 ---------------- */
+function viewProjects(){
+  const cards = state.projects.length ? state.projects.map(p =>
+    '<div class="project">' +
+    '<div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px">' +
+    '<h4>' + esc(p.name) + '</h4><span class="badge ' + STAGE_CLASS[p.stage] + '">' + STAGES[p.stage] + '</span></div>' +
+    '<div class="stack-text">' + (p.stack ? esc(p.stack) : '未填写技术栈') + '</div>' +
+    '<div class="note">' + (p.note ? esc(p.note) : '还没有复盘备注，点击卡片补充。') + '</div>' +
+    (p.link ? '<a class="link" href="' + (/^https?:\/\//.test(p.link) ? esc(p.link) : 'https://' + esc(p.link)) + '" target="_blank" rel="noopener">' + esc(p.link) + '</a>' : '<span class="link" style="color:var(--soft)">暂无链接</span>') +
+    '<div class="project-foot"><button class="btn sm ghost" data-action="edit-project" data-id="' + p.id + '">编辑</button>' +
+    '<button class="icon-btn" data-action="del-project" data-id="' + p.id + '" title="删除">' +
+    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg></button></div>' +
+    '</div>'
+  ).join('') : '<div class="empty" style="grid-column:1/-1">还没有实践项目。把课程作业、比赛、实习里的产出记下来，简历就有素材了。</div>';
+
+  return '<div class="view">' +
+    '<div class="view-head"><div><h2>实践项目</h2><p>共 ' + state.projects.length + ' 个 · 进行中 ' + state.projects.filter(p => p.stage === 1).length + ' 个</p></div>' +
+    '<div class="view-actions"><button class="btn primary" data-action="add-project">新增项目</button></div></div>' +
+    '<div class="project-grid">' + cards + '</div></div>';
+}
+
+/* ---------------- 视图：数据 ---------------- */
+function viewData(){
+  const role = roleByName(state.profile.targetRole);
+  return '<div class="view">' +
+    '<div class="view-head"><div><h2>数据</h2><p>所有数据只保存在本机浏览器（localStorage），不会上传服务器</p></div></div>' +
+    '<div class="data-grid">' +
+    '<div class="card data-card"><div class="ic">↓</div><div><h4>导出备份</h4><p>下载 JSON 文件，包含档案、技能、任务与项目。</p><button class="btn ghost sm" data-action="export">下载 JSON</button></div></div>' +
+    '<div class="card data-card"><div class="ic">↑</div><div><h4>导入备份</h4><p>从之前的 JSON 文件恢复，导入会覆盖当前数据。</p><button class="btn ghost sm" data-action="import">选择文件</button></div></div>' +
+    '<div class="card data-card"><div class="ic">◎</div><div><h4>载入示例数据</h4><p>用示例（林晓）快速体验完整流程，会覆盖当前数据。</p><button class="btn ghost sm" data-action="sample">载入示例</button></div></div>' +
+    '<div class="card data-card"><div class="ic" style="background:var(--danger-soft); color:var(--danger)">×</div><div><h4>清空数据</h4><p>清空任务与项目，档案和技能保留，适合新学期重新规划。</p><button class="btn ghost sm" data-action="clear-tasks">清空任务与项目</button></div></div>' +
+    '</div>' +
+    '<div class="card" style="margin-top:16px"><div class="card-head"><h3>当前状态</h3></div>' +
+    '<table class="tbl"><tbody>' +
+    '<tr><td style="color:var(--muted)">目标岗位</td><td>' + esc(state.profile.targetRole) + '（匹配度 ' + (role ? roleMatch(role) : 0) + '%）</td></tr>' +
+    '<tr><td style="color:var(--muted)">任务 / 项目</td><td>' + state.tasks.length + ' 项任务 · ' + state.projects.length + ' 个项目</td></tr>' +
+    '<tr><td style="color:var(--muted)">存储位置</td><td>浏览器 localStorage，键名 <code>' + KEY + '</code></td></tr>' +
+    '<tr><td style="color:var(--muted)">提示</td><td>换电脑或清理浏览器缓存前，先导出 JSON 备份。</td></tr>' +
+    '</tbody></table></div></div>';
+}
+
+/* ---------------- 渲染分发 ---------------- */
+function renderView(){
+  const views = { overview: viewOverview, profile: viewProfile, roles: viewRoles, roadmap: viewRoadmap, tasks: viewTasks, projects: viewProjects, data: viewData };
+  $('#main').innerHTML = (views[activeTab] || viewOverview)();
+}
+
+function setTab(tab){
+  if (!TABS.includes(tab)) return;
+  activeTab = tab;
+  try { history.replaceState(null, '', '#' + tab); } catch (e) {}
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ---------------- 模态框 ---------------- */
+function openModal(html){
+  $('#modalRoot').innerHTML = '<div class="overlay" data-action="close-modal"><div class="modal" role="dialog" aria-modal="true">' + html + '</div></div>';
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(){
+  $('#modalRoot').innerHTML = '';
+  document.body.style.overflow = '';
+}
+
+function roleModal(name){
+  const role = roleByName(name);
+  if (!role) return;
+  const m = roleMatch(role);
+  const rows = role.needs.map(([s,w]) => {
+    const cur = levelOf(s), need = requiredLevel(w);
+    const wlabel = w >= 3 ? '核心' : (w === 2 ? '重要' : '加分');
+    return '<tr><td style="font-weight:600">' + esc(s) + '</td>' +
+      '<td><span class="badge gray">' + wlabel + '</span></td>' +
+      '<td><div style="display:flex; align-items:center; gap:8px"><div class="bar" style="width:90px"><i style="width:' + (cur / 5 * 100) + '%"></i></div><span>' + cur + '</span></div></td>' +
+      '<td>' + need + '</td>' +
+      '<td>' + (cur >= need ? '<span class="badge green">已达标</span>' : '<span class="badge amber">缺 ' + (need - cur) + ' 分</span>') + '</td></tr>';
+  }).join('');
+
+  openModal('<div class="modal-head"><div><h3>' + esc(role.name) + '</h3>' +
+    '<div class="hint" style="margin-top:2px">' + esc(role.summary) + '</div></div>' +
+    '<button class="close" data-action="close-modal">×</button></div>' +
+    '<div class="modal-body">' +
+    '<div style="display:flex; align-items:center; gap:18px; margin-bottom:16px">' + ring(m) +
+    '<div><div style="font-size:13px; color:var(--muted)">加权匹配度</div>' +
+    '<div style="font-size:15px; font-weight:700; margin-top:4px">差距 ' + gapsOf(role).length + ' 项技能</div>' +
+    '<div class="hint" style="margin-top:6px">目标等级：核心 4 分 · 重要 3 分 · 加分 2 分</div></div></div>' +
+    '<table class="tbl"><thead><tr><th>技能</th><th>权重</th><th>你的水平</th><th>目标</th><th>状态</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+    '<div class="modal-foot"><button class="btn ghost" data-action="close-modal">关闭</button>' +
+    '<button class="btn primary" data-action="set-target" data-role="' + esc(role.name) + '">设为目标岗位</button></div>');
+}
+
+/* ---------------- 项目模态框 ---------------- */
+function projectModal(id){
+  const p = id ? state.projects.find(x => x.id === id) : null;
+  const data = p || { name:'', stack:'', stage:0, link:'', note:'' };
+  openModal('<form id="projectForm" data-id="' + (p ? p.id : '') + '">' +
+    '<div class="modal-head"><h3>' + (p ? '编辑项目' : '新增项目') + '</h3><button type="button" class="close" data-action="close-modal">×</button></div>' +
+    '<div class="modal-body"><div class="form-grid">' +
+    '<label class="field" style="grid-column:1/-1">项目名称<input name="name" value="' + esc(data.name) + '" maxlength="60" required placeholder="例如：中文医疗问答 RAG"></label>' +
+    '<label class="field" style="grid-column:1/-1">技术栈<input name="stack" value="' + esc(data.stack) + '" maxlength="80" placeholder="Python / PyTorch / FastAPI"></label>' +
+    '<label class="field">阶段<select name="stage">' + STAGES.map((s, i) => '<option value="' + i + '"' + (i === data.stage ? ' selected' : '') + '>' + s + '</option>').join('') + '</select></label>' +
+    '<label class="field">仓库 / 演示链接<input name="link" value="' + esc(data.link) + '" maxlength="120" placeholder="github.com/you/project"></label>' +
+    '<label class="field" style="grid-column:1/-1">复盘备注<textarea name="note" maxlength="200" placeholder="数据、指标、踩过的坑、下一步">' + esc(data.note) + '</textarea></label>' +
+    '</div></div>' +
+    '<div class="modal-foot"><button type="button" class="btn ghost" data-action="close-modal">取消</button>' +
+    '<button class="btn primary" type="submit">保存</button></div></form>');
+}
+
+/* ---------------- 交互 ---------------- */
+function toast(msg){
+  const el = $('#toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+document.addEventListener('click', e => {
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  const action = btn.dataset.action;
+
+  if (action === 'close-modal') { closeModal(); return; }
+  if (btn.classList.contains('overlay')) return;
+
+  switch (action) {
+    case 'tab': setTab(btn.dataset.tab); break;
+    case 'go': setTab(btn.dataset.tab); break;
+    case 'role-detail': roleModal(btn.dataset.role); break;
+    case 'set-target': {
+      state.profile.targetRole = btn.dataset.role;
+      save();
+      closeModal();
+      render();
+      toast('目标岗位已设为「' + btn.dataset.role + '」');
+      break;
+    }
+    case 'gen-tasks': {
+      const added = generateTasks();
+      render();
+      toast(added ? '已生成 ' + added + ' 条任务' : '路线任务已全部生成，无需重复创建');
+      break;
+    }
+    case 'filter': taskFilter = btn.dataset.filter; renderView(); break;
+    case 'toggle-task': {
+      const t = state.tasks.find(x => x.id === Number(btn.dataset.id));
+      if (t) { t.done = !t.done; save(); renderView(); renderChips(); }
+      break;
+    }
+    case 'del-task': {
+      const t = state.tasks.find(x => x.id === Number(btn.dataset.id));
+      if (t && confirm('删除任务「' + t.title.slice(0, 30) + '」？')) {
+        state.tasks = state.tasks.filter(x => x.id !== t.id);
+        save(); render();
+      }
+      break;
+    }
+    case 'add-project': projectModal(null); break;
+    case 'edit-project': projectModal(Number(btn.dataset.id)); break;
+    case 'del-project': {
+      const p = state.projects.find(x => x.id === Number(btn.dataset.id));
+      if (p && confirm('删除项目「' + p.name + '」？')) {
+        state.projects = state.projects.filter(x => x.id !== p.id);
+        save(); render();
+      }
+      break;
+    }
+    case 'export': downloadJSON(); break;
+    case 'import': $('#importFile').click(); break;
+    case 'sample': {
+      if (confirm('载入示例数据会覆盖当前数据，继续？')) {
+        state = sampleState(); save(); render(); toast('已载入示例数据');
+      }
+      break;
+    }
+    case 'clear-tasks': {
+      if (confirm('清空全部任务与项目？档案和技能自评会保留。')) {
+        state.tasks = []; state.projects = []; state.nextTaskId = 1; state.nextProjectId = 1;
+        save(); render(); toast('已清空任务与项目');
+      }
+      break;
+    }
+    case 'start-fresh': {
+      if (confirm('清空示例数据，从零开始填写自己的档案？')) {
+        state = emptyState(); save(); activeTab = 'profile'; render(); toast('已切换为空白档案');
+      }
+      break;
+    }
+    case 'dismiss-banner': state.demo = false; save(); renderBanner(); break;
+  }
+});
+
+document.addEventListener('submit', e => {
+  e.preventDefault();
+  if (e.target.id === 'taskForm') {
+    const f = new FormData(e.target);
+    const title = String(f.get('title') || '').trim();
+    if (!title) return;
+    state.tasks.push({
+      id: state.nextTaskId++, title,
+      category: String(f.get('category') || '其他'),
+      due: String(f.get('due') || addDaysISO(30)),
+      done: false,
+      hours: Number(f.get('hours') || 8)
+    });
+    save(); render(); toast('任务已添加');
+  }
+  if (e.target.id === 'projectForm') {
+    const f = new FormData(e.target);
+    const id = Number(e.target.dataset.id || 0);
+    const name = String(f.get('name') || '').trim();
+    if (!name) return;
+    const payload = {
+      name, stack: String(f.get('stack') || ''), stage: Number(f.get('stage') || 0),
+      link: String(f.get('link') || ''), note: String(f.get('note') || '')
+    };
+    if (id) {
+      const p = state.projects.find(x => x.id === id);
+      if (p) Object.assign(p, payload);
+    } else {
+      state.projects.push({ id: state.nextProjectId++, ...payload });
+    }
+    save(); closeModal(); render(); toast('项目已保存');
+  }
+});
+
+document.addEventListener('input', e => {
+  const el = e.target;
+  if (el.dataset && el.dataset.skill !== undefined) {
+    const name = el.dataset.skill;
+    state.skills[name] = Number(el.value);
+    const val = document.querySelector('[data-val="' + CSS.escape(name) + '"]');
+    if (val) val.textContent = el.value;
+    const role = roleByName(state.profile.targetRole);
+    const m = role ? roleMatch(role) : 0;
+    const pm = $('#profileMatch');
+    if (pm) pm.textContent = m + '%';
+    const cm = $('#chipMatch');
+    if (cm) cm.textContent = m + '%';
+    save();
+  }
+});
+
+document.addEventListener('change', e => {
+  const el = e.target;
+  if (el.dataset && el.dataset.field) {
+    const key = el.dataset.field;
+    let value = el.value;
+    if (key === 'weeklyHours') value = clamp(Number(value) || 1, 1, 80);
+    state.profile[key] = value;
+    save();
+    renderChips();
+    if (key === 'targetRole') renderView();
+  }
+});
+
+$('#importFile').addEventListener('change', e => {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = normalize(JSON.parse(String(reader.result)));
+      state = data;
+      save(); render();
+      toast('导入成功');
+    } catch (err) {
+      toast('导入失败：文件不是有效的 JSON 备份');
+    }
+  };
+  reader.readAsText(file, 'utf-8');
+  e.target.value = '';
+});
+
+function downloadJSON(){
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'ai-career-workbench-' + todayISO() + '.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  toast('已导出 JSON 备份');
+}
+
+/* ---------------- 启动 ---------------- */
+render();
+</script>
+</body>
+</html>
