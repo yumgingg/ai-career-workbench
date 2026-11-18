@@ -347,7 +347,51 @@ table.tbl{width:100%; border-collapse:collapse; font-size:13px}
 }
 #toast.show{opacity:1; transform:translate(-50%,0)}
 
+/* ---------- 本周视图 ---------- */
+.week-head{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap}
+.week-range{font-size:12.5px; color:var(--muted)}
+.focus-list{display:flex; flex-direction:column; gap:10px; margin-top:6px}
+.focus-item{display:flex; align-items:flex-start; gap:12px; padding:12px 14px; border:1px solid var(--line); border-radius:14px; background:#fbfcff}
+.focus-item.done{opacity:.55}
+.focus-item .idx{width:24px; height:24px; border-radius:50%; background:var(--brand-soft); color:var(--brand); font-weight:800; display:grid; place-items:center; font-size:12px; flex:none}
+.focus-item .body{flex:1; min-width:0}
+.focus-item .title{font-weight:600; font-size:13.5px}
+.focus-item .meta{font-size:11.5px; color:var(--muted); margin-top:3px; display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+.focus-empty{border:1.5px dashed #dbe4f0; border-radius:14px; padding:18px; text-align:center; color:var(--muted); font-size:13px; background:#fbfcff}
+
+/* ---------- 开始清单 ---------- */
+.checklist-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px}
+.check-item{display:flex; align-items:flex-start; gap:10px; padding:12px; border:1px solid var(--line); border-radius:12px; background:#fff}
+.check-item.done{background:#f6fefb; border-color:#c7f0df}
+.check-item .mark{width:20px; height:20px; border-radius:50%; border:1.5px solid #cbd5e1; display:grid; place-items:center; font-size:10px; color:transparent; flex:none; margin-top:2px}
+.check-item.done .mark{background:var(--ok); border-color:var(--ok); color:#fff}
+.check-item > div{flex:1; min-width:0}
+.check-item .t{font-size:13px; font-weight:600}
+.check-item .h{font-size:11.5px; color:var(--muted); margin-top:2px}
+.check-item .go{margin-left:auto; align-self:center}
+
+/* ---------- 技能证据 ---------- */
+.skill-row{grid-template-columns:150px 1fr 26px auto}
+.ev-badge{border:1px solid var(--line); background:#fff; border-radius:999px; padding:3px 9px; font-size:11px; color:var(--muted); cursor:pointer; white-space:nowrap}
+.ev-badge.has{background:var(--teal-soft); border-color:#b7e6d8; color:#0f766e}
+.ev-list{display:flex; flex-direction:column; gap:8px; margin-top:10px}
+.ev-item{display:flex; align-items:center; gap:10px; padding:10px 12px; border:1px solid var(--line); border-radius:12px; background:#fbfcff; font-size:12.8px; flex-wrap:wrap}
+.ev-item .skill{font-weight:700; color:#334155; min-width:96px}
+.ev-item .name{flex:1; min-width:140px}
+.ev-item .link{font-size:11.5px}
+
+/* ---------- 底部导航 ---------- */
+.bottom-nav{display:none}
+
+/* ---------- Toast 撤销 ---------- */
+#toast{display:flex; align-items:center; gap:12px}
+.toast-undo{border:0; background:rgba(255,255,255,.16); color:#fff; border-radius:8px; padding:4px 10px; font-size:12px; cursor:pointer; white-space:nowrap}
+.toast-undo:hover{background:rgba(255,255,255,.28)}
+
 /* ---------- 响应式 ---------- */
+@media (hover:none){
+  .task-actions{opacity:1}
+}
 @media (max-width:980px){
   .stat-grid{grid-template-columns:repeat(2,1fr)}
   .role-grid,.project-grid{grid-template-columns:1fr}
@@ -359,6 +403,7 @@ table.tbl{width:100%; border-collapse:collapse; font-size:13px}
   .container{padding:0 16px}
   .topbar-inner{padding:12px 0; flex-wrap:wrap; gap:10px}
   .top-actions .save-state{display:none}
+  .top-actions [data-action="export"]{display:none}
   .brand p{display:none}
   .banner{flex-wrap:wrap; gap:10px}
   .banner .spacer{display:none}
@@ -367,14 +412,28 @@ table.tbl{width:100%; border-collapse:collapse; font-size:13px}
   .task-form{grid-template-columns:1fr 1fr}
   .task-form .btn{grid-column:1/-1}
   .start-card{flex-direction:column; align-items:flex-start}
-  .start-card .btn{width:100%}
+  .start-card > .btn{width:100%}
+  .check-item .go{padding:6px 10px; font-size:11.5px}
   .hero-meta{gap:14px}
   main{padding:18px 0 60px}
   .hero{flex-direction:column; align-items:flex-start; padding:22px}
   .hero h2{font-size:24px}
   .ring{align-self:center}
   .form-grid{grid-template-columns:1fr}
-  .skill-row{grid-template-columns:110px 1fr 24px}
+  .skill-row{grid-template-columns:1fr 88px 22px auto}
+  .checklist-grid{grid-template-columns:1fr}
+  .tabs{display:none}
+  body{padding-bottom:66px}
+  .bottom-nav{
+    display:flex; position:fixed; left:0; right:0; bottom:0; z-index:40;
+    background:rgba(255,255,255,.95); backdrop-filter:blur(12px); border-top:1px solid var(--line);
+    padding:6px 8px calc(6px + env(safe-area-inset-bottom));
+  }
+  .bottom-nav button{
+    flex:1; border:0; background:none; padding:7px 4px; font-size:11px; color:var(--muted);
+    font-weight:650; border-radius:10px; cursor:pointer;
+  }
+  .bottom-nav button.active{color:var(--brand); background:var(--brand-soft)}
 }
 </style>
 </head>
@@ -410,6 +469,7 @@ table.tbl{width:100%; border-collapse:collapse; font-size:13px}
 
   <nav class="tabs" id="tabs">
     <button class="tab active" data-action="tab" data-tab="overview">概览</button>
+    <button class="tab" data-action="tab" data-tab="week">本周</button>
     <button class="tab" data-action="tab" data-tab="profile">我的档案</button>
     <button class="tab" data-action="tab" data-tab="roles">岗位匹配</button>
     <button class="tab" data-action="tab" data-tab="roadmap">学习路线</button>
@@ -421,6 +481,14 @@ table.tbl{width:100%; border-collapse:collapse; font-size:13px}
 </div>
 
 <main id="main" class="container"></main>
+
+<nav class="bottom-nav" id="bottomNav">
+  <button data-action="tab" data-tab="overview" data-nav="overview">概览</button>
+  <button data-action="tab" data-tab="week" data-nav="week">本周</button>
+  <button data-action="tab" data-tab="tasks" data-nav="tasks">任务</button>
+  <button data-action="tab" data-tab="roadmap" data-nav="roadmap">路线</button>
+  <button data-action="more-tabs" data-nav="more">更多</button>
+</nav>
 
 <div id="modalRoot"></div>
 <div id="toast"></div>
@@ -484,6 +552,7 @@ function remainText(iso){
   return '剩 ' + d + ' 天';
 }
 function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+function clip(s, n){ s = String(s); return s.length > n ? s.slice(0, n) + '…' : s; }
 
 /* ---------------- 数据 ---------------- */
 function blankSkills(){ const o = {}; SKILLS.forEach(s => o[s] = 0); return o; }
@@ -492,7 +561,9 @@ function emptyState(){
   return {
     version: 1, demo: false,
     profile: { name:'同学', grade:'大三', weeklyHours:10, targetRole:'NLP / 大模型工程师' },
-    skills: blankSkills(), tasks: [], projects: [], nextTaskId: 1, nextProjectId: 1
+    skills: blankSkills(), tasks: [], projects: [], evidence: [],
+    nextTaskId: 1, nextProjectId: 1, nextEvidenceId: 1,
+    weekPlan: { key: '', ids: [] }
   };
 }
 
@@ -518,6 +589,12 @@ function sampleState(){
     { id:3, name:'校园课程助手 Agent', stack:'Python / Function Calling', stage:0, link:'', note:'需求调研中' }
   ];
   s.nextProjectId = 4;
+  s.evidence = [
+    { id:1, skill:'Python 编程', name:'课程项目：校园二手交易数据分析', type:'课程项目', link:'' },
+    { id:2, skill:'深度学习', name:'猫狗图像分类 baseline（PyTorch）', type:'项目', link:'github.com/linxiao/cv-baseline' },
+    { id:3, skill:'自然语言处理', name:'中文医疗问答 RAG 项目', type:'项目', link:'github.com/linxiao/rag-medqa' }
+  ];
+  s.nextEvidenceId = 4;
   return s;
 }
 
@@ -536,8 +613,20 @@ function normalize(s){
     id: Number(p.id) || 0, name: String(p.name), stack: String(p.stack || ''),
     stage: clamp(Number(p.stage) || 0, 0, 3), link: String(p.link || ''), note: String(p.note || '')
   })) : [];
+  out.evidence = Array.isArray(s.evidence) ? s.evidence
+    .filter(e => e && e.name && SKILLS.includes(e.skill))
+    .map(e => ({
+      id: Number(e.id) || 0, skill: String(e.skill), name: String(e.name),
+      type: String(e.type || '其他'), link: String(e.link || '')
+    })) : [];
   out.nextTaskId = Math.max(Number(s.nextTaskId) || 1, ...out.tasks.map(t => t.id + 1), 1);
   out.nextProjectId = Math.max(Number(s.nextProjectId) || 1, ...out.projects.map(p => p.id + 1), 1);
+  out.nextEvidenceId = Math.max(Number(s.nextEvidenceId) || 1, ...out.evidence.map(e => e.id + 1), 1);
+  const wp = (s.weekPlan && typeof s.weekPlan === 'object') ? s.weekPlan : {};
+  out.weekPlan = {
+    key: typeof wp.key === 'string' ? wp.key : '',
+    ids: Array.isArray(wp.ids) ? wp.ids.map(Number).filter(n => n > 0) : []
+  };
   return out;
 }
 
@@ -662,8 +751,48 @@ function nextDueText(){
   return d < 0 ? '有任务已逾期' : (d === 0 ? '今天有任务到期' : '最近截止还有 ' + d + ' 天');
 }
 
+/* ---------------- 周计划与技能证据 ---------------- */
+const EVIDENCE_TYPES = ['课程项目','项目','竞赛','实习','科研','证书','其他'];
+
+function startOfWeek(d){
+  const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  x.setDate(x.getDate() - ((x.getDay() + 6) % 7));
+  return x;
+}
+function weekRange(){
+  const mon = startOfWeek(new Date());
+  const sun = new Date(mon.getTime() + 6 * DAY);
+  return { mon: localISO(mon), sun: localISO(sun), key: localISO(mon) };
+}
+function weekLabel(){
+  const w = weekRange();
+  return w.mon.slice(5).replace('-', '/') + ' – ' + w.sun.slice(5).replace('-', '/');
+}
+function evidenceOf(skill){ return state.evidence.filter(e => e.skill === skill); }
+function evidenceCount(skill){ return evidenceOf(skill).length; }
+function claimedSkills(){ return SKILLS.filter(s => levelOf(s) >= 2); }
+function evidenceCoverage(){
+  const claimed = claimedSkills();
+  return { claimed: claimed.length, covered: claimed.filter(s => evidenceCount(s) > 0).length };
+}
+function suggestFocus(){
+  return state.tasks.filter(t => !t.done)
+    .sort((a, b) => String(a.due).localeCompare(String(b.due)) || a.id - b.id)
+    .slice(0, 3);
+}
+function currentFocus(){
+  const w = weekRange();
+  if (state.weekPlan.key !== w.key) return [];
+  return state.weekPlan.ids.map(id => state.tasks.find(t => t.id === id)).filter(Boolean);
+}
+function setFocus(ids){
+  const w = weekRange();
+  state.weekPlan = { key: w.key, ids: ids.slice(0, 3) };
+}
+
 /* ---------------- 渲染：公共 ---------------- */
-const TABS = ['overview','profile','roles','roadmap','tasks','projects','data','guide'];
+const TABS = ['overview','week','profile','roles','roadmap','tasks','projects','data','guide'];
+const MORE_TABS = ['profile','roles','projects','data','guide'];
 let activeTab = TABS.includes(location.hash.replace('#','')) ? location.hash.replace('#','') : 'overview';
 let taskFilter = 'all';
 
@@ -672,6 +801,8 @@ function render(){
   renderBanner();
   renderView();
   document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === activeTab));
+  const navKey = MORE_TABS.includes(activeTab) ? 'more' : activeTab;
+  document.querySelectorAll('#bottomNav button').forEach(b => b.classList.toggle('active', b.dataset.nav === navKey));
 }
 
 function renderChips(){
@@ -705,16 +836,26 @@ function ring(m){
     '<text class="lab" x="60" y="80">MATCH</text></svg>';
 }
 
+const ICON_EDIT = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';
+const ICON_DEL = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg>';
+
 /* ---------------- 视图：概览 ---------------- */
 function viewOverview(){
   const role = roleByName(state.profile.targetRole) || ROLES[0];
   const m = roleMatch(role);
   const gaps = gapsOf(role);
   const s = stats();
-  const todo = sortedTasks('todo').slice(0, 3);
   const stages = buildRoadmap(role);
-  const notStarted = !Object.values(state.skills).some(v => Number(v) > 0) &&
-                     !state.tasks.length && !state.projects.length;
+  const ev = evidenceCoverage();
+  const focus = currentFocus().filter(t => !t.done);
+  const checklist = [
+    { done: state.profile.name !== '同学', t: '填写基本信息', h: '姓名、年级、目标岗位', tab: 'profile' },
+    { done: Object.values(state.skills).some(v => Number(v) > 0), t: '完成技能自评', h: '13 项技能打分', tab: 'profile' },
+    { done: state.tasks.length > 0, t: '生成学习路线任务', h: '把四阶段路线落成待办', tab: 'roadmap' },
+    { done: state.projects.length > 0, t: '记录第一个实践项目', h: '课程、竞赛、实习都算', tab: 'projects' }
+  ];
+  const checkDone = checklist.filter(c => c.done).length;
+  const showChecklist = !state.demo && checkDone < 4;
 
   const gapHtml = gaps.length ? gaps.slice(0, 5).map(g => {
     const pct = Math.round(g.cur / 5 * 100);
@@ -726,14 +867,15 @@ function viewOverview(){
       '</div>';
   }).join('') : '<div class="empty">该岗位所需技能均已达到建议水平，可以专注于项目与面试。</div>';
 
-  const taskHtml = todo.length ? '<div class="task-list">' + todo.map(t => {
-    const od = daysUntil(t.due) < 0;
-    return '<div class="task' + (od ? ' overdue' : '') + '">' +
-      '<div class="task-body"><div class="task-title">' + esc(t.title) + '</div>' +
-      '<div class="task-meta"><span class="badge ' + (CAT_CLASS[t.category] || 'gray') + '">' + esc(t.category) + '</span>' +
-      '<span>' + remainText(t.due) + '</span><span>' + Number(t.hours || 0) + 'h</span></div></div>' +
-      '<button class="btn sm ghost" data-action="toggle-task" data-id="' + t.id + '">完成</button></div>';
-  }).join('') + '</div>' : '<div class="empty">待办已清空，可以更新技能自评或补充新项目。</div>';
+  const weekHtml = focus.length
+    ? '<div class="focus-list">' + focus.slice(0, 3).map((t, i) =>
+        '<div class="focus-item">' +
+        '<span class="idx">' + (i + 1) + '</span>' +
+        '<div class="body"><div class="title" data-action="edit-task" data-id="' + t.id + '" style="cursor:pointer" title="点击编辑">' + esc(t.title) + '</div>' +
+        '<div class="meta"><span class="badge ' + (CAT_CLASS[t.category] || 'gray') + '">' + esc(t.category) + '</span>' +
+        '<span>' + remainText(t.due) + '</span><span>' + Number(t.hours || 0) + 'h</span></div></div>' +
+        '<button class="btn sm ghost" data-action="toggle-task" data-id="' + t.id + '">完成</button></div>').join('') + '</div>'
+    : '<div class="focus-empty">本周还没有定下三件事<br><button class="btn sm primary" data-action="week-adopt" style="margin-top:10px">采用推荐的三件事</button></div>';
 
   const stageHtml = stages.map((st, i) => {
     const total = st.items.length;
@@ -750,10 +892,14 @@ function viewOverview(){
     '<div class="view-head"><div><h2>概览</h2><p>' + fmtDate(todayISO()) + ' · ' + nextDueText() + '</p></div>' +
     '<div class="view-actions"><button class="btn primary" data-action="tab" data-tab="roadmap">查看学习路线</button></div></div>' +
 
-    (notStarted
-      ? '<div class="card start-card"><div><h3>先花 2 分钟，建立你的第一份规划</h3>' +
-        '<p>填写基本信息和技能自评后，匹配度、技能差距与四阶段学习路线会自动生成。</p></div>' +
-        '<button class="btn primary" data-action="tab" data-tab="profile">开始填写档案</button></div>'
+    (showChecklist
+      ? '<div class="card start-card" style="display:block"><div class="card-head" style="margin-bottom:4px">' +
+        '<h3>开始你的规划</h3><span class="sub">已完成 ' + checkDone + ' / 4</span></div>' +
+        '<div class="checklist-grid">' + checklist.map(c =>
+          '<div class="check-item' + (c.done ? ' done' : '') + '">' +
+          '<span class="mark">✓</span><div><div class="t">' + c.t + '</div><div class="h">' + c.h + '</div></div>' +
+          (c.done ? '' : '<button class="btn sm ghost go" data-action="tab" data-tab="' + c.tab + '">去完成</button>') +
+          '</div>').join('') + '</div></div>'
       : '') +
 
     '<section class="hero"><div class="hero-body">' +
@@ -761,6 +907,9 @@ function viewOverview(){
     '<h2>' + esc(role.name) + '</h2>' +
     '<p>' + esc(role.summary) + '</p>' +
     '<div class="hero-meta"><span><b>' + m + '%</b>匹配度</span><span><b>' + gaps.length + '</b>项技能差距</span>' +
+    (ev.claimed
+      ? '<span><b>' + ev.covered + '/' + ev.claimed + '</b>技能有证据</span>'
+      : '<span><b>0</b>项技能有证据</span>') +
     '<span><b>' + s.done + '</b>项任务已完成</span></div>' +
     '<div class="hero-actions">' +
     '<button class="btn light" data-action="tab" data-tab="profile">更新技能自评</button>' +
@@ -776,7 +925,9 @@ function viewOverview(){
 
     '<div class="cols">' +
     '<div class="card"><div class="card-head"><h3>技能差距</h3><span class="sub">' + esc(role.name) + '</span></div>' + gapHtml + '</div>' +
-    '<div class="card"><div class="card-head"><h3>接下来做什么</h3><span class="sub">按截止日期排序</span></div>' + taskHtml + '</div>' +
+    '<div class="card"><div class="card-head"><h3>本周三件事</h3><span class="sub">' + weekLabel() + '</span></div>' + weekHtml +
+    '<div style="display:flex; justify-content:flex-end; margin-top:12px">' +
+    '<button class="btn sm ghost" data-action="tab" data-tab="week">打开本周计划</button></div></div>' +
     '</div>' +
 
     '<div class="card" style="margin-top:16px"><div class="card-head"><h3>四阶段推进</h3><span class="sub">共 26 周 · 每周 ' + state.profile.weeklyHours + ' 小时</span></div>' +
@@ -789,15 +940,102 @@ function viewOverview(){
     '</div>';
 }
 
+/* ---------------- 视图：本周 ---------------- */
+function viewWeek(){
+  const w = weekRange();
+  const planIds = state.weekPlan.key === w.key ? state.weekPlan.ids : [];
+  const focus = planIds.map(id => state.tasks.find(t => t.id === id)).filter(t => t && !t.done);
+  const suggestion = suggestFocus();
+  const overdue = state.tasks.filter(t => !t.done && daysUntil(t.due) < 0)
+    .sort((a, b) => String(a.due).localeCompare(String(b.due)) || a.id - b.id);
+  const dueWeek = state.tasks.filter(t => !t.done && t.due >= w.mon && t.due <= w.sun)
+    .sort((a, b) => String(a.due).localeCompare(String(b.due)) || a.id - b.id);
+  const weekAll = state.tasks.filter(t => t.due >= w.mon && t.due <= w.sun);
+  const weekDone = weekAll.filter(t => t.done).length;
+  const pct = weekAll.length ? Math.round(100 * weekDone / weekAll.length) : 0;
+  const nextMon = localISO(new Date(parseISO(w.mon) + 7 * DAY));
+  const nextSun = localISO(new Date(parseISO(w.sun) + 7 * DAY));
+  const nextList = state.tasks.filter(t => !t.done && t.due >= nextMon && t.due <= nextSun)
+    .sort((a, b) => String(a.due).localeCompare(String(b.due))).slice(0, 5);
+
+  const row = (t, extra) => {
+    const od = !t.done && daysUntil(t.due) < 0;
+    return '<div class="task' + (t.done ? ' done' : '') + (od ? ' overdue' : '') + '">' +
+      '<button class="check' + (t.done ? ' on' : '') + '" data-action="toggle-task" data-id="' + t.id + '" aria-label="切换完成">' +
+      '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>' +
+      '<div class="task-body"><div class="task-title" data-action="edit-task" data-id="' + t.id + '" style="cursor:pointer">' + esc(t.title) + '</div>' +
+      '<div class="task-meta"><span class="badge ' + (CAT_CLASS[t.category] || 'gray') + '">' + esc(t.category) + '</span>' +
+      '<span>' + fmtDate(t.due) + '</span><span' + (od ? ' style="color:var(--danger);font-weight:700"' : '') + '>' + remainText(t.due) + '</span>' +
+      '<span>' + Number(t.hours || 0) + 'h</span></div></div>' +
+      '<div class="task-actions">' + (extra || '') +
+      '<button class="icon-btn" data-action="edit-task" data-id="' + t.id + '" title="编辑">' + ICON_EDIT + '</button>' +
+      '<button class="icon-btn" data-action="del-task" data-id="' + t.id + '" title="删除">' + ICON_DEL + '</button></div></div>';
+  };
+
+  const focusHtml = focus.length
+    ? '<div class="focus-list">' + focus.map((t, i) =>
+        '<div class="focus-item">' +
+        '<span class="idx">' + (i + 1) + '</span>' +
+        '<div class="body"><div class="title" data-action="edit-task" data-id="' + t.id + '" style="cursor:pointer" title="点击编辑">' + esc(t.title) + '</div>' +
+        '<div class="meta"><span class="badge ' + (CAT_CLASS[t.category] || 'gray') + '">' + esc(t.category) + '</span>' +
+        '<span>' + remainText(t.due) + '</span><span>' + Number(t.hours || 0) + 'h</span></div></div>' +
+        '<button class="btn sm ghost" data-action="toggle-task" data-id="' + t.id + '">完成</button>' +
+        '<button class="icon-btn" data-action="week-remove" data-id="' + t.id + '" title="移出本周">×</button>' +
+        '</div>').join('') + '</div>'
+    : (suggestion.length
+        ? '<div class="focus-empty">还没有定下本周三件事<br><button class="btn sm primary" data-action="week-adopt" style="margin-top:10px">采用推荐的三件事</button></div>'
+        : '<div class="empty">还没有待办任务，先去「学习路线」生成，或到「任务」新增。</div>');
+
+  return '<div class="view">' +
+    '<div class="view-head"><div><h2>本周</h2><p>' + weekLabel() + ' · 本周到期 ' + weekAll.length + ' 项，已完成 ' + weekDone +
+    ' 项（' + pct + '%）</p></div>' +
+    '<div class="view-actions"><button class="btn primary" data-action="tab" data-tab="tasks">全部任务</button></div></div>' +
+
+    '<div class="card"><div class="card-head"><h3>本周三件事</h3><span class="sub">' +
+    (focus.length ? '只安排 3 件，做完再说' : '建议只安排 3 件') + '</span></div>' +
+    focusHtml +
+    '<div style="display:flex; justify-content:flex-end; gap:8px; margin-top:12px">' +
+    '<button class="btn sm ghost" data-action="week-refresh">重新推荐</button>' +
+    (focus.length ? '<button class="btn sm ghost" data-action="week-clear">清空</button>' : '') +
+    '</div></div>' +
+
+    '<div class="cols">' +
+    '<div class="card"><div class="card-head"><h3>逾期未完成</h3><span class="sub">' + overdue.length + ' 项</span></div>' +
+    (overdue.length ? overdue.map(t => row(t, '<button class="btn sm ghost" data-action="week-postpone" data-id="' + t.id + '">顺延一周</button>')).join('')
+      : '<div class="empty">没有逾期任务，节奏不错。</div>') +
+    '</div>' +
+    '<div class="card"><div class="card-head"><h3>本周到期</h3><span class="sub">' + dueWeek.length + ' 项</span></div>' +
+    (dueWeek.length ? dueWeek.map(t => row(t)).join('')
+      : '<div class="empty">本周没有到期任务，可以提前做下周的事。</div>') +
+    '</div></div>' +
+
+    '<div class="card" style="margin-top:16px"><div class="card-head"><h3>下周预览</h3><span class="sub">' +
+    nextMon.slice(5).replace('-', '/') + ' – ' + nextSun.slice(5).replace('-', '/') + '</span></div>' +
+    (nextList.length ? '<div class="task-list">' + nextList.map(t => row(t)).join('') + '</div>'
+      : '<div class="empty">下周还没有安排任务，可以先在「任务」里加几项。</div>') +
+    '</div></div>';
+}
+
 /* ---------------- 视图：档案 ---------------- */
 function viewProfile(){
   const role = roleByName(state.profile.targetRole);
   const m = role ? roleMatch(role) : 0;
-  const skillRows = SKILLS.map(s =>
-    '<div class="skill-row"><div class="skill-name">' + esc(s) + '</div>' +
-    '<input type="range" min="0" max="5" step="1" value="' + levelOf(s) + '" data-skill="' + esc(s) + '" aria-label="' + esc(s) + '">' +
-    '<div class="skill-val" data-val="' + esc(s) + '">' + levelOf(s) + '</div></div>'
-  ).join('');
+  const skillRows = SKILLS.map(s => {
+    const n = evidenceCount(s);
+    return '<div class="skill-row"><div class="skill-name">' + esc(s) + '</div>' +
+      '<input type="range" min="0" max="5" step="1" value="' + levelOf(s) + '" data-skill="' + esc(s) + '" aria-label="' + esc(s) + '">' +
+      '<div class="skill-val" data-val="' + esc(s) + '">' + levelOf(s) + '</div>' +
+      '<button class="ev-badge' + (n ? ' has' : '') + '" data-action="add-evidence" data-skill="' + esc(s) + '" title="为这项技能添加证据">证据 ' + n + '</button></div>';
+  }).join('');
+
+  const cov = evidenceCoverage();
+  const evList = state.evidence.length ? state.evidence.map(e =>
+    '<div class="ev-item"><span class="skill">' + esc(e.skill) + '</span>' +
+    '<span class="badge gray">' + esc(e.type) + '</span>' +
+    '<span class="name">' + esc(e.name) + '</span>' +
+    (e.link ? '<a class="link" href="' + (/^https?:\/\//.test(e.link) ? esc(e.link) : 'https://' + esc(e.link)) + '" target="_blank" rel="noopener">查看</a>' : '') +
+    '<button class="icon-btn" data-action="del-evidence" data-id="' + e.id + '" title="删除证据">' + ICON_DEL + '</button></div>'
+  ).join('') : '<div class="empty">还没有证据。把课程项目、竞赛、实习里能证明这项技能的东西记下来。</div>';
 
   return '<div class="view">' +
     '<div class="view-head"><div><h2>我的档案</h2><p>技能自评会实时影响岗位匹配度与学习路线</p></div>' +
@@ -813,6 +1051,11 @@ function viewProfile(){
 
     '<div class="card" style="margin-top:16px"><div class="card-head"><h3>技能自评</h3><span class="hint">0 未接触 · 1 了解概念 · 2 跟教程做过 · 3 独立完成课程项目 · 4 完整项目/实习 · 5 可指导他人</span></div>' +
     '<div class="skill-list">' + skillRows + '</div></div>' +
+
+    '<div class="card" style="margin-top:16px"><div class="card-head"><h3>技能证据链</h3><span class="sub">已覆盖 ' + cov.covered + '/' + cov.claimed + ' 项自评技能</span></div>' +
+    '<p class="hint" style="margin-bottom:8px">给自评 2 分及以上的技能补充证据（课程项目、竞赛、实习、科研均可）。匹配度仍按自评计算，证据用来支撑"为什么是这么多分"。</p>' +
+    evList +
+    '<div style="display:flex; justify-content:flex-end; margin-top:12px"><button class="btn sm primary" data-action="add-evidence">添加证据</button></div></div>' +
     '</div>';
 }
 
@@ -881,12 +1124,13 @@ function viewTasks(){
     return '<div class="task' + (t.done ? ' done' : '') + (od ? ' overdue' : '') + '">' +
       '<button class="check' + (t.done ? ' on' : '') + '" data-action="toggle-task" data-id="' + t.id + '" aria-label="切换完成">' +
       '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button>' +
-      '<div class="task-body"><div class="task-title">' + esc(t.title) + '</div>' +
+      '<div class="task-body"><div class="task-title" data-action="edit-task" data-id="' + t.id + '" style="cursor:pointer">' + esc(t.title) + '</div>' +
       '<div class="task-meta"><span class="badge ' + (CAT_CLASS[t.category] || 'gray') + '">' + esc(t.category) + '</span>' +
       '<span>' + fmtDate(t.due) + '</span><span' + (od ? ' style="color:var(--danger);font-weight:700"' : '') + '>' + (t.done ? '已完成' : remainText(t.due)) + '</span>' +
       '<span>' + Number(t.hours || 0) + 'h</span></div></div>' +
-      '<div class="task-actions"><button class="icon-btn" data-action="del-task" data-id="' + t.id + '" title="删除">' +
-      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg></button></div>' +
+      '<div class="task-actions">' +
+      '<button class="icon-btn" data-action="edit-task" data-id="' + t.id + '" title="编辑">' + ICON_EDIT + '</button>' +
+      '<button class="icon-btn" data-action="del-task" data-id="' + t.id + '" title="删除">' + ICON_DEL + '</button></div>' +
       '</div>';
   }).join('') : '<div class="empty">没有符合条件的任务。可以在上方新增，或到「学习路线」一键生成。</div>';
 
@@ -963,12 +1207,16 @@ function viewGuide(){
     '<div class="guide-step"><div class="num">3</div><div><b>生成路线，落到任务</b>' +
     '<p>学习路线页给出 26 周四阶段安排，点「一键生成阶段任务」，路线会变成带截止日期的任务，之后在任务页逐项完成。</p>' +
     '<button class="btn sm ghost" data-action="tab" data-tab="roadmap">去生成路线</button></div></div>' +
+    '<div class="guide-step"><div class="num">4</div><div><b>每周只做三件事</b>' +
+    '<p>本周页把任务收敛成 3 件：逾期可「顺延一周」，本周到期与下周预览一目了然，做完再换下一批。</p>' +
+    '<button class="btn sm ghost" data-action="tab" data-tab="week">打开本周</button></div></div>' +
     '</div>' +
 
     '<div class="card" style="margin-top:16px"><div class="card-head"><h3>每个页面做什么</h3><span class="sub">建议使用频率</span></div>' +
     '<table class="tbl"><thead><tr><th>页面</th><th>用途</th><th>建议频率</th></tr></thead><tbody>' +
-    '<tr><td><b>概览</b></td><td>看目标岗位匹配度、任务完成率、逾期情况和下一步做什么</td><td>每次打开</td></tr>' +
-    '<tr><td><b>我的档案</b></td><td>改基本信息、做技能自评，匹配度实时变化</td><td>每学期 / 学完一门课</td></tr>' +
+    '<tr><td><b>概览</b></td><td>看目标岗位匹配度、完成率、本周三件事和阶段推进</td><td>每次打开</td></tr>' +
+    '<tr><td><b>本周</b></td><td>把任务收敛成"本周三件事"，处理逾期与本周到期</td><td>每周一 / 每天</td></tr>' +
+    '<tr><td><b>我的档案</b></td><td>改基本信息、做技能自评、补充技能证据</td><td>每学期 / 学完一门课</td></tr>' +
     '<tr><td><b>岗位匹配</b></td><td>比较 7 类岗位、看技能差距、切换目标</td><td>定方向时</td></tr>' +
     '<tr><td><b>学习路线</b></td><td>查看四阶段安排并生成任务</td><td>每学期初</td></tr>' +
     '<tr><td><b>任务</b></td><td>新增 / 完成 / 筛选任务，看逾期提醒</td><td>每天或每周</td></tr>' +
@@ -1001,7 +1249,8 @@ function viewGuide(){
     '<div><div class="q">老师或同学打开链接，会看到我的数据吗？</div><div class="a">不会。数据存在每个人自己的浏览器里，互不影响；第一次打开看到的是示例数据（林晓），顶部点「从零开始」即可换成自己的。</div></div>' +
     '<div><div class="q">匹配度为什么是 33%？</div><div class="a">按目标岗位的技能权重和你的自评等级加权计算。把差距最大的几项技能分数提上去，匹配度会明显变化。</div></div>' +
     '<div><div class="q">生成的 12 条任务是什么？</div><div class="a">来自四阶段路线：基础补齐、核心进阶、项目实战和求职冲刺，截止日期分别对应第 6 / 14 / 22 / 26 周，可在任务页修改。</div></div>' +
-    '<div><div class="q">任务逾期了怎么办？</div><div class="a">先判断是否还要做：要做就改截止日期，不做就删除；概览页会按截止日期提示最近的三件事。</div></div>' +
+    '<div><div class="q">任务逾期了怎么办？</div><div class="a">在「本周」页处理：要做就点「顺延一周」或编辑日期，不做就删除；「本周三件事」只保留最重要的 3 件。</div></div>' +
+    '<div><div class="q">技能证据会改变匹配度吗？</div><div class="a">不会。匹配度仍按自评分数计算，证据用于说明分数依据；「我的档案 → 技能证据链」可以给每项技能补充课程项目、竞赛、实习等证据。</div></div>' +
     '<div><div class="q">换电脑后数据没了？</div><div class="a">localStorage 不跨设备。用「数据 → 导出 JSON」备份，在新设备「导入备份」即可。</div></div>' +
     '</div></div>' +
     '</div>';
@@ -1009,7 +1258,7 @@ function viewGuide(){
 
 /* ---------------- 渲染分发 ---------------- */
 function renderView(){
-  const views = { overview: viewOverview, profile: viewProfile, roles: viewRoles, roadmap: viewRoadmap, tasks: viewTasks, projects: viewProjects, data: viewData, guide: viewGuide };
+  const views = { overview: viewOverview, week: viewWeek, profile: viewProfile, roles: viewRoles, roadmap: viewRoadmap, tasks: viewTasks, projects: viewProjects, data: viewData, guide: viewGuide };
   $('#main').innerHTML = (views[activeTab] || viewOverview)();
 }
 
@@ -1051,6 +1300,7 @@ function showWelcome(){
     '<li><span class="n">1</span><div><b>完善档案与技能自评</b><span>13 项技能打分，实时看到岗位匹配度</span></div></li>' +
     '<li><span class="n">2</span><div><b>看岗位匹配，确定方向</b><span>比较 7 类 AI 岗位，找到差距最大的技能</span></div></li>' +
     '<li><span class="n">3</span><div><b>生成路线，落到任务</b><span>一键把 26 周路线变成带截止日期的任务</span></div></li>' +
+    '<li><span class="n">4</span><div><b>每周只做三件事</b><span>「本周」页收敛 3 件，逾期可顺延</span></div></li>' +
     '</ol>' +
     '<div class="welcome-note">' + note + '</div>' +
     '<div class="welcome-actions">' +
@@ -1105,13 +1355,71 @@ function projectModal(id){
     '<button class="btn primary" type="submit">保存</button></div></form>');
 }
 
+/* ---------------- 任务编辑模态框 ---------------- */
+function taskModal(id){
+  const t = id ? state.tasks.find(x => x.id === id) : null;
+  const data = t || { title:'', category:'课程', due: addDaysISO(7), hours: 8 };
+  openModal('<form id="taskEditForm" data-id="' + (t ? t.id : '') + '">' +
+    '<div class="modal-head"><h3>' + (t ? '编辑任务' : '新增任务') + '</h3><button type="button" class="close" data-action="close-modal">×</button></div>' +
+    '<div class="modal-body"><div class="form-grid">' +
+    '<label class="field" style="grid-column:1/-1">任务标题<input name="title" value="' + esc(data.title) + '" maxlength="80" required placeholder="例如：复现一篇 RAG 论文"></label>' +
+    '<label class="field">分类<select name="category">' + CATEGORIES.map(c => '<option' + (c === data.category ? ' selected' : '') + '>' + c + '</option>').join('') + '</select></label>' +
+    '<label class="field">截止日期<input type="date" name="due" value="' + esc(data.due) + '" required></label>' +
+    '<label class="field">预估工时(h)<input type="number" name="hours" min="0.5" max="500" step="0.5" value="' + Number(data.hours || 8) + '"></label>' +
+    '</div></div>' +
+    '<div class="modal-foot">' +
+    (t ? '<button type="button" class="btn ghost" data-action="del-task" data-id="' + t.id + '">删除</button>' : '') +
+    '<button type="button" class="btn ghost" data-action="close-modal">取消</button>' +
+    '<button class="btn primary" type="submit">保存</button></div></form>');
+}
+
+/* ---------------- 技能证据模态框 ---------------- */
+function evidenceModal(skill){
+  const preset = SKILLS.includes(skill) ? skill : SKILLS[0];
+  openModal('<form id="evidenceForm">' +
+    '<div class="modal-head"><h3>添加技能证据</h3><button type="button" class="close" data-action="close-modal">×</button></div>' +
+    '<div class="modal-body"><div class="form-grid">' +
+    '<label class="field">技能<select name="skill">' + SKILLS.map(s => '<option' + (s === preset ? ' selected' : '') + '>' + esc(s) + '</option>').join('') + '</select></label>' +
+    '<label class="field">证据类型<select name="type">' + EVIDENCE_TYPES.map(t => '<option>' + esc(t) + '</option>').join('') + '</select></label>' +
+    '<label class="field" style="grid-column:1/-1">证据名称<input name="name" maxlength="80" required placeholder="例如：课程项目《校园二手交易数据分析》"></label>' +
+    '<label class="field" style="grid-column:1/-1">链接（可选）<input name="link" maxlength="120" placeholder="github.com/you/project"></label>' +
+    '</div><p class="hint" style="margin-top:10px">证据只用于说明分数依据，不会改变匹配度。</p></div>' +
+    '<div class="modal-foot"><button type="button" class="btn ghost" data-action="close-modal">取消</button>' +
+    '<button class="btn primary" type="submit">保存证据</button></div></form>');
+}
+
+/* ---------------- 更多（移动端） ---------------- */
+function moreModal(){
+  const items = [
+    ['profile', '我的档案', '技能自评与证据'],
+    ['roles', '岗位匹配', '7 类岗位与差距'],
+    ['projects', '项目', '实践项目台账'],
+    ['data', '数据', '备份与重置'],
+    ['guide', '指南', '操作说明']
+  ];
+  openModal('<div class="modal-head"><h3>更多</h3><button class="close" data-action="close-modal">×</button></div>' +
+    '<div class="modal-body"><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">' +
+    items.map(([t, label, desc]) =>
+      '<button class="btn ghost" data-action="tab" data-tab="' + t + '" style="height:auto;padding:14px;text-align:left">' +
+      '<b>' + label + '</b><div class="hint" style="margin-top:2px;font-weight:400">' + desc + '</div></button>').join('') +
+    '</div></div>');
+}
+
 /* ---------------- 交互 ---------------- */
-function toast(msg){
+function hideToast(){ $('#toast').classList.remove('show'); }
+function toast(msg, opts){
   const el = $('#toast');
-  el.textContent = msg;
+  el.innerHTML = '<span>' + esc(msg) + '</span>';
+  if (opts && opts.undo) {
+    const b = document.createElement('button');
+    b.className = 'toast-undo';
+    b.textContent = opts.undoLabel || '撤销';
+    b.addEventListener('click', () => { opts.undo(); hideToast(); });
+    el.appendChild(b);
+  }
   el.classList.add('show');
   clearTimeout(toast._t);
-  toast._t = setTimeout(() => el.classList.remove('show'), 2200);
+  toast._t = setTimeout(hideToast, opts && opts.undo ? 5000 : 2200);
 }
 
 document.addEventListener('click', e => {
@@ -1137,7 +1445,7 @@ document.addEventListener('click', e => {
       render(); setTab('overview');
       toast('已载入示例数据，可随时在「数据」里清空');
       break;
-    case 'tab': setTab(btn.dataset.tab); break;
+    case 'tab': closeModal(); setTab(btn.dataset.tab); break;
     case 'go': setTab(btn.dataset.tab); break;
     case 'role-detail': roleModal(btn.dataset.role); break;
     case 'set-target': {
@@ -1157,25 +1465,67 @@ document.addEventListener('click', e => {
     case 'filter': taskFilter = btn.dataset.filter; renderView(); break;
     case 'toggle-task': {
       const t = state.tasks.find(x => x.id === Number(btn.dataset.id));
-      if (t) { t.done = !t.done; save(); renderView(); renderChips(); }
+      if (t) { t.done = !t.done; save(); render(); }
       break;
     }
+    case 'edit-task': taskModal(Number(btn.dataset.id)); break;
     case 'del-task': {
-      const t = state.tasks.find(x => x.id === Number(btn.dataset.id));
-      if (t && confirm('删除任务「' + t.title.slice(0, 30) + '」？')) {
-        state.tasks = state.tasks.filter(x => x.id !== t.id);
-        save(); render();
-      }
+      const idx = state.tasks.findIndex(x => x.id === Number(btn.dataset.id));
+      if (idx < 0) break;
+      const removed = state.tasks[idx];
+      state.tasks.splice(idx, 1);
+      const planIdx = state.weekPlan.ids.indexOf(removed.id);
+      if (planIdx >= 0) state.weekPlan.ids.splice(planIdx, 1);
+      save(); closeModal(); render();
+      toast('已删除「' + clip(removed.title, 14) + '」', {
+        undo: () => { state.tasks.splice(idx, 0, removed); save(); render(); toast('已恢复任务'); }
+      });
       break;
     }
+    case 'week-adopt':
+    case 'week-refresh': {
+      const ids = suggestFocus().map(t => t.id);
+      if (!ids.length) { toast('没有待办任务可以安排'); break; }
+      setFocus(ids); save(); render();
+      toast('本周三件事已更新');
+      break;
+    }
+    case 'week-clear':
+      setFocus([]); save(); render();
+      toast('已清空本周三件事');
+      break;
+    case 'week-remove': {
+      const id = Number(btn.dataset.id);
+      setFocus(state.weekPlan.ids.filter(x => x !== id));
+      save(); render();
+      break;
+    }
+    case 'week-postpone': {
+      const t = state.tasks.find(x => x.id === Number(btn.dataset.id));
+      if (!t) break;
+      t.due = addDaysISO(7);
+      save(); render();
+      toast('已顺延到 ' + t.due);
+      break;
+    }
+    case 'add-evidence': evidenceModal(btn.dataset.skill); break;
+    case 'del-evidence': {
+      state.evidence = state.evidence.filter(x => x.id !== Number(btn.dataset.id));
+      save(); render(); toast('已删除证据');
+      break;
+    }
+    case 'more-tabs': moreModal(); break;
     case 'add-project': projectModal(null); break;
     case 'edit-project': projectModal(Number(btn.dataset.id)); break;
     case 'del-project': {
-      const p = state.projects.find(x => x.id === Number(btn.dataset.id));
-      if (p && confirm('删除项目「' + p.name + '」？')) {
-        state.projects = state.projects.filter(x => x.id !== p.id);
-        save(); render();
-      }
+      const idx = state.projects.findIndex(x => x.id === Number(btn.dataset.id));
+      if (idx < 0) break;
+      const removed = state.projects[idx];
+      state.projects.splice(idx, 1);
+      save(); closeModal(); render();
+      toast('已删除「' + clip(removed.name, 14) + '」', {
+        undo: () => { state.projects.splice(idx, 0, removed); save(); render(); toast('已恢复项目'); }
+      });
       break;
     }
     case 'export': downloadJSON(); break;
@@ -1225,6 +1575,39 @@ document.addEventListener('submit', e => {
       hours: Number(f.get('hours') || 8)
     });
     save(); render(); toast('任务已添加');
+  }
+  if (e.target.id === 'taskEditForm') {
+    const f = new FormData(e.target);
+    const id = Number(e.target.dataset.id || 0);
+    const title = String(f.get('title') || '').trim();
+    if (!title) return;
+    const payload = {
+      title,
+      category: String(f.get('category') || '其他'),
+      due: String(f.get('due') || addDaysISO(7)),
+      hours: Number(f.get('hours') || 8)
+    };
+    if (id) {
+      const t = state.tasks.find(x => x.id === id);
+      if (t) Object.assign(t, payload);
+    } else {
+      state.tasks.push({ id: state.nextTaskId++, ...payload, done: false });
+    }
+    save(); closeModal(); render();
+    toast(id ? '任务已更新' : '任务已添加');
+  }
+  if (e.target.id === 'evidenceForm') {
+    const f = new FormData(e.target);
+    const name = String(f.get('name') || '').trim();
+    const skill = String(f.get('skill') || '');
+    if (!name || !SKILLS.includes(skill)) return;
+    state.evidence.push({
+      id: state.nextEvidenceId++, skill, name,
+      type: String(f.get('type') || '其他'),
+      link: String(f.get('link') || '')
+    });
+    save(); closeModal(); render();
+    toast('证据已添加');
   }
   if (e.target.id === 'projectForm') {
     const f = new FormData(e.target);
