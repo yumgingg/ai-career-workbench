@@ -1547,6 +1547,7 @@ document.addEventListener('click', e => {
     case 'clear-tasks': {
       if (confirm('清空全部任务与项目？档案和技能自评会保留。')) {
         state.tasks = []; state.projects = []; state.nextTaskId = 1; state.nextProjectId = 1;
+        state.weekPlan = { key: '', ids: [] };
         save(); render(); toast('已清空任务与项目');
       }
       break;
